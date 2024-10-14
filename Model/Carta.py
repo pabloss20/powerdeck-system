@@ -131,7 +131,7 @@ class Carta:
         self.fecha_modificacion = self.fecha_creacion
         self.raza = raza.value
         self.imagen = None  # Asignar imagen en el futuro
-        self.tipo_carta = tipo_carta
+        self.tipo_carta = tipo_carta.value
         self.activa_en_juego = True
         self.activa_en_sobres = True
         self.turno_poder = turno_poder
@@ -272,6 +272,6 @@ atributos = Atributos(
 
 # Crear una nueva carta
 try:
-    carta = Carta("Nombre Personaje", "Descripcion de la carta.", "Nombre Variante", Raza.HUMANO, "Ultra-Rara", 50, 10, atributos)
+    carta = Carta("Nombre Personaje", "Descripcion de la carta.", "Nombre Variante", Raza.HUMANO, Tipo_de_Carta.ULTRA_RARA, 50, 10, atributos)
 except ValueError as e:
     print(e)
