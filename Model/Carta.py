@@ -102,7 +102,7 @@ class Carta:
     """
     class Carta:
         """
-    def __init__(self, nombre_personaje, descripcion, nombre_variante, raza, tipo_carta,
+    def __init__(self, nombre_personaje, descripcion, nombre_variante, raza, imagen, tipo_carta,
                  turno_poder, bonus_poder, atributos, archivo_json='cartas.json'):
         """
         :param nombre_personaje: Nombre del personaje asociado a la carta.
@@ -130,7 +130,7 @@ class Carta:
         self.fecha_creacion = datetime.now()
         self.fecha_modificacion = self.fecha_creacion
         self.raza = raza.value
-        self.imagen = None  # Asignar imagen en el futuro
+        self.imagen = imagen  # Asignar imagen en el futuro
         self.tipo_carta = tipo_carta.value
         self.activa_en_juego = True
         self.activa_en_sobres = True
@@ -228,6 +228,7 @@ class Carta:
             'fecha_creacion': self.fecha_creacion.isoformat(),
             'fecha_modificacion': self.fecha_modificacion.isoformat(),
             'raza': self.raza,
+            'imagen': self.imagen,
             'tipo_carta': self.tipo_carta,
             'activa_en_juego': self.activa_en_juego,
             'activa_en_sobres': self.activa_en_sobres,
