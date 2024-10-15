@@ -1,201 +1,205 @@
 import pygame
-import pygame_textinput
+import os
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image
+import shutil
+import pygame_gui
+from pygame_gui.core import ObjectID
 
 # Inicializar Pygame
 pygame.init()
 
+clock = pygame.time.Clock()
 # Definir colores
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
-GRIS_CLARO = (200, 200, 200)
-AZUL_CLARO = (173, 216, 230)
+FONDO_COLOR = (240, 240, 240)
 
 # Definir el tamaño inicial de la ventana
-ANCHO_VENTANA = 800
-ALTO_VENTANA = 600
+ANCHO_VENTANA = 1820
+ALTO_VENTANA = 900
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA), pygame.RESIZABLE)
 pygame.display.set_caption('Power Deck - Herramienta de Cartas')
 
-# Fuentes
-FUENTE_MEDIANA = pygame.font.Font(None, 40)
-FUENTE_PEQUEÑA = pygame.font.Font(None, 30)
+# Ruta de las imágenes
+ruta_imagenes = os.path.join('imgs')
+ruta_guardar_imagenes = os.path.join('Cartas')  # Carpeta para guardar las imágenes
 
-# Crear una clase para manejar los inputs de texto
-class InputBox:
-    def __init__(self, x, y, w, h, text=''):
-        self.rect = pygame.Rect(x, y, w, h)
-        self.color_inactive = GRIS_CLARO
-        self.color_active = AZUL_CLARO
-        self.color = self.color_inactive
-        self.text = text
-        self.txt_surface = FUENTE_MEDIANA.render(text, True, NEGRO)
-        self.active = False
+# Crear la carpeta de destino si no existe
+if not os.path.exists(ruta_guardar_imagenes):
+    os.makedirs(ruta_guardar_imagenes)
 
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # Si el usuario hace clic en el input
-            if self.rect.collidepoint(event.pos):
-                self.active = not self.active
-            else:
-                self.active = False
-            # Cambia el color del campo según si está activo
-            self.color = self.color_active if self.active else self.color_inactive
+# Cargar las imágenes
+titulo_crear_carta = pygame.image.load(os.path.join(ruta_imagenes, 'titulo_crearcarta.png'))
+inputboxes_img = pygame.image.load(os.path.join(ruta_imagenes, 'inputboxes.png'))
+arrastrar_imagen = pygame.image.load(os.path.join(ruta_imagenes, 'ArrastrarImagen.png'))
+info = pygame.image.load(os.path.join(ruta_imagenes, 'info.png'))
 
-        if event.type == pygame.KEYDOWN:
-            if self.active:
-                if event.key == pygame.K_RETURN:
-                    print(self.text)  # Puedes manejar el envío aquí
-                    self.text = ''
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    self.text += event.unicode
-                # Renderizar de nuevo la superficie del texto
-                self.txt_surface = FUENTE_MEDIANA.render(self.text, True, NEGRO)
+# Fuente para el texto
+fuente = pygame.font.Font(None, 32)
 
 
-def dibujar_boton(texto, x, y, ancho, alto, color_fondo, color_texto):
-    pygame.draw.rect(ventana, color_fondo, [x, y, ancho, alto])
-    texto_boton = FUENTE_MEDIANA.render(texto, True, color_texto)
-    ventana.blit(texto_boton, (x + (ancho - texto_boton.get_width()) // 2, y + (alto - texto_boton.get_height()) // 2))
+# Redimensionar imágenes
+def redimensionar_imagen(imagen, ancho_maximo):
+    ancho_original, alto_original = imagen.get_size()
+    proporcion = alto_original / ancho_original
+    alto_maximo = int(ancho_maximo * proporcion)
+    return pygame.transform.scale(imagen, (ancho_maximo, alto_maximo))
 
 
-def dibujar_input(texto, x, y, ancho, alto):
-    pygame.draw.rect(ventana, GRIS_CLARO, [x, y, ancho, alto], 2)
-    texto_input = FUENTE_PEQUEÑA.render(texto, True, NEGRO)
-    ventana.blit(texto_input, (x + 5, y + 5))
+# Función para guardar la imagen seleccionada en una carpeta
+def guardar_imagen_seleccionada(ruta_imagen_original):
+    # Extraer el nombre del archivo
+    nombre_archivo = os.path.basename(ruta_imagen_original)
+
+    # Ruta de destino
+    ruta_guardada = os.path.join(ruta_guardar_imagenes, nombre_archivo)
+
+    # Copiar la imagen a la carpeta de destino
+    shutil.copy(ruta_imagen_original, ruta_guardada)
+
+    return ruta_guardada  # Devolver la ruta donde se guardó la imagen
+
+# Redimensionar imágenes
+titulo_crearcarta = redimensionar_imagen(titulo_crear_carta, 600)
+info_bloques = redimensionar_imagen(info, 400)
+inputboxes_img = redimensionar_imagen(inputboxes_img, 400)
+arrastrar_imagen = redimensionar_imagen(arrastrar_imagen, 455)
+
+# Variable para manejar la imagen actual arrastrar
+imagen_actual = arrastrar_imagen
+posicion_imagen = (ANCHO_VENTANA * 0.6, ALTO_VENTANA * 0.26)
 
 
-def dibujar_area_imagen(x, y, ancho, alto):
-    pygame.draw.rect(ventana, GRIS_CLARO, [x, y, ancho, alto], 2)
-    texto_imagen = FUENTE_PEQUEÑA.render("Arrastrar imagen aquí", True, NEGRO)
-    ventana.blit(texto_imagen, (x + 20, y + 20))
-
-
-def dibujar_pantalla_general(titulo_texto, campos, ancho_ventana, alto_ventana):
-    ventana.fill(BLANCO)
-
-    # Proporciones y posiciones relativas
-    margen_x = int(ancho_ventana * 0.05)
-    margen_y = int(alto_ventana * 0.1)
-    ancho_columna = int(ancho_ventana * 0.4)  # Ancho total para las dos columnas de campos
-    ancho_subcolumna = int(ancho_columna * 0.45)  # Sub-columna para etiquetas e inputs
-    alto_input = int(alto_ventana * 0.07)
-    espacio_entre_campos = int(alto_ventana * 0.03)
-
-    # Título
-    titulo = FUENTE_MEDIANA.render(titulo_texto, True, NEGRO)
-    ventana.blit(titulo, (ancho_ventana // 2 - titulo.get_width() // 2, margen_y - 60))
-
-    # Dibujar los campos de texto en dos sub-columnas
-    for i, campo in enumerate(campos):
-        fila = i  # Usamos el índice directamente como fila
-        x_label = margen_x  # Columna izquierda (etiquetas)
-        x_input = margen_x + ancho_subcolumna + 10  # Columna derecha (inputs)
-        y = margen_y + fila * (alto_input + espacio_entre_campos)
-
-        # Dibujar la etiqueta (izquierda)
-        dibujar_input(campo["label"], x_label, y, ancho_subcolumna, alto_input)
-
-        # Dibujar el input (derecha)
-        dibujar_input(campo["input"], x_input, y, ancho_subcolumna, alto_input)
-
-    # Área de imagen en la segunda columna (derecha)
-    x_area_imagen = int(ancho_ventana * 0.55)  # Comienza la segunda columna principal
-    y_area_imagen = margen_y
-    ancho_area_imagen = int(ancho_ventana * 0.35)
-    alto_area_imagen = int(alto_ventana * 0.6)
-    dibujar_area_imagen(x_area_imagen, y_area_imagen, ancho_area_imagen, alto_area_imagen)
-
-    # Botón "Subir" debajo del área de imagen
-    ancho_boton_subir = int(ancho_ventana * 0.15)
-    alto_boton_subir = int(alto_ventana * 0.07)
-    x_boton_subir = x_area_imagen + (ancho_area_imagen - ancho_boton_subir) // 2
-    y_boton_subir = y_area_imagen + alto_area_imagen + 20
-    dibujar_boton("Subir", x_boton_subir, y_boton_subir, ancho_boton_subir, alto_boton_subir, GRIS_CLARO, NEGRO)
-
-    # Dibujar el botón "Siguiente"
-    ancho_boton = int(ancho_ventana * 0.2)
-    alto_boton = int(alto_ventana * 0.08)
-    x_boton = int(ancho_ventana * 0.3)
-    y_boton = int(alto_ventana * 0.85)
-    dibujar_boton("Siguiente", x_boton, y_boton, ancho_boton, alto_boton, AZUL_CLARO, NEGRO)
-
-
-def pantalla_1(ancho_ventana, alto_ventana):
-    # Estructura de campos corregida con diccionarios que tienen 'label' e 'input'
-    campos = [
-        {"label": "Nombre del personaje:", "input": "Input"},
-        {"label": "Descripción:", "input": "Input"},
-        {"label": "Nombre de Variante:", "input": "Input"},
-        {"label": "Indicador:", "input": "auto"},
-        {"label": "Fecha de creación:", "input": "2024/09/02"},
-        {"label": "Fecha de modificación:", "input": "2024/09/02"},
-        {"label": "Raza:", "input": "Input"}
-    ]
-
-    # Llamada a la función de dibujar la pantalla con los campos correctamente formateados
-    dibujar_pantalla_general("Pantalla 1 - Información Principal", campos, ancho_ventana, alto_ventana)
+# Función para abrir un cuadro de diálogo de selección de archivo
+def abrir_dialogo_imagen():
+    root = tk.Tk()
+    root.withdraw()  # Ocultar la ventana principal
+    ruta_imagen = filedialog.askopenfilename(title="Seleccionar Imagen",
+                                             filetypes=[("Imágenes", "*.png; *webp;")])
+    root.destroy()  # Destruir la ventana después de la selección
+    return ruta_imagen
 
 
 
-def pantalla_2(ancho_ventana, alto_ventana):
-    # Estructura de campos corregida con diccionarios que tienen 'label' e 'input'
-    campos = [
-        {"label": "Rareza de carta:", "input": "Input"},
-        {"label": "Descripción:", "input": "Input"},
-        {"label": "Nombre de Variante:", "input": "Input"},
-        {"label": "Indicador:", "input": "auto"},
-        {"label": "Fecha de creación:", "input": "2024/09/02"},
-        {"label": "Fecha de modificación:", "input": "2024/09/02"},
-        {"label": "Raza:", "input": "Input"}
-    ]
 
-    # Llamada a la función de dibujar la pantalla con los campos correctamente formateados
-    dibujar_pantalla_general("Pantalla 1 - Información Principal", campos, ancho_ventana, alto_ventana)
+MANAGER = pygame_gui.UIManager((ANCHO_VENTANA, ALTO_VENTANA), 'text_entry_box.json')
+#MANAGER.get_theme().load_theme('text_entry_line.json')
+# Crear instancias de UITextEntryLine en lugar de las cajas de texto tradicionales
+text_input_boxes = [
+    pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.26, 350, 42)), manager=MANAGER,
+        object_id=ObjectID(class_id='@campoTXT',object_id="input1")),
+    pygame_gui.elements.UITextEntryBox(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.34, 350, 170)), manager=MANAGER,object_id=ObjectID(class_id='@campoTXT',object_id="input2")),
+    pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.55, 350, 42)), manager=MANAGER,
+        object_id=ObjectID(class_id='@campoTXT',object_id="input3")),
+    pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.62, 350, 42)), manager=MANAGER,
+        object_id=ObjectID(class_id='@campoTXT',object_id="input4")),
+    pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.69, 350, 42)),
+                                        manager=MANAGER, object_id=ObjectID(class_id='@campoTXT',object_id="input5")),
+    pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.77, 350, 42)), manager=MANAGER,
+        object_id=ObjectID(class_id='@campoTXT',object_id="input6")),
+    pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.83, 350, 42)), manager=MANAGER,
+        object_id=ObjectID(class_id='@campoTXT',object_id="input7"))
+]
+# Añadir el botón de guardar
+boton_guardar = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.9, 100, 40)),
+    text='Guardar',
+    manager=MANAGER
+)
 
-def pantalla_3():
-    campos = ["Poder", "Velocidad", "Magia", "Defensa", "Fuerza", "Agilidad",
-              "Resistencia", "Inteligencia", "Altura", "Salto", "Flexibilidad", "Carisma"]
-    dibujar_pantalla_general("Pantalla 3 - Atributos de la Carta", campos, "Siguiente")
+
+# Función para obtener los valores de los campos de texto
+def guardar_datos():
+    nombre_personaje = text_input_boxes[0].get_text()
+    descripcion = text_input_boxes[1].get_text()
+    nombre_variante = text_input_boxes[2].get_text()
+    indicador = text_input_boxes[3].get_text()
+    fecha_creacion = text_input_boxes[4].get_text()
+    fecha_modificacion = text_input_boxes[5].get_text()
+    raza = text_input_boxes[6].get_text()
+
+    # Aquí puedes hacer lo que necesites con las variables, como imprimirlas o guardarlas en un archivo
+    print(f"Nombre del personaje: {nombre_personaje}")
+    print(f"Descripción: {descripcion}")
+    print(f"Nombre de variante: {nombre_variante}")
+    print(f"Indicador: {indicador}")
+    print(f"Fecha de creación: {fecha_creacion}")
+    print(f"Fecha de modificación: {fecha_modificacion}")
+    print(f"Raza: {raza}")
 
 
-def pantalla_4():
-    campos = ["Sabiduria", "Suerte", "Coordinacion", "Amabilidad", "Lealtad", "Disciplina",
-              "Liderazgo", "Prudencia", "Confianza", "Percepcion", "Valentia", "PoderTotal"]
-    dibujar_pantalla_general("Pantalla 4 - Atributos", campos, "Subir", GRIS_CLARO)
+# Función para actualizar pygame_gui
+def actualizar_gui(evento):
+
+    MANAGER.process_events(evento)
+    MANAGER.update(clock.get_time() / 1000.0)
+    MANAGER.draw_ui(ventana)
+
+# Función que dibuja la pantalla general
+def dibujar_pantalla_general():
+    ventana.fill(FONDO_COLOR)  # Rellenar con el color de fondo
+
+    # Dibujar la imagen del título
+    ventana.blit(titulo_crearcarta, (ANCHO_VENTANA // 2 - titulo_crearcarta.get_width() // 2, 20))
+
+    # Dibujar la imagen de los bloques de información
+    ventana.blit(info_bloques, (ANCHO_VENTANA * 0.1, ALTO_VENTANA * 0.2))
+
+    # Dibujar la imagen actual
+    ventana.blit(imagen_actual, posicion_imagen)
+
+
+
 
 
 # Loop principal
-pantalla_actual = 1
 ejecutando = True
 while ejecutando:
+    UI_REFRESH_RATE = clock.tick(60) / 1000
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             ejecutando = False
-        elif evento.type == pygame.VIDEORESIZE:  # Detecta cuando se redimensiona la ventana
+
+
+        elif evento.type == pygame.VIDEORESIZE:
             ANCHO_VENTANA, ALTO_VENTANA = evento.w, evento.h
             ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA), pygame.RESIZABLE)
+        # Evento para abrir el diálogo de imagen al hacer clic en la imagen de arrastrar
         elif evento.type == pygame.MOUSEBUTTONDOWN:
-            # Obtener la posición del clic
-            pos = pygame.mouse.get_pos()
-            # Comprobar si se ha hecho clic en el botón "Siguiente"
-            ancho_boton = int(ANCHO_VENTANA * 0.2)
-            alto_boton = int(ALTO_VENTANA * 0.08)
-            x_boton = int(ANCHO_VENTANA * 0.7)
-            y_boton = int(ALTO_VENTANA * 0.85)
-            if x_boton <= pos[0] <= x_boton + ancho_boton and y_boton <= pos[1] <= y_boton + alto_boton:
-                pantalla_actual = 1 if pantalla_actual >= 4 else pantalla_actual + 1
-    # Dibujar la pantalla actual
-    if pantalla_actual == 1:
-        pantalla_1(ANCHO_VENTANA, ALTO_VENTANA)
-    elif pantalla_actual == 2:
-        pantalla_2()
-    elif pantalla_actual == 3:
-        pantalla_3()
-    elif pantalla_actual == 4:
-        pantalla_4()
+            if evento.button == 1:  # Botón izquierdo
+                mouse_x, mouse_y = evento.pos
+                rect_arrastrar = imagen_actual.get_rect(topleft=posicion_imagen)
+                if rect_arrastrar.collidepoint(mouse_x, mouse_y):
+                    ruta_imagen = abrir_dialogo_imagen()  # Abre el diálogo para seleccionar una imagen
+                    if ruta_imagen:  # Si se seleccionó una imagen
+                        ruta_guardada = guardar_imagen_seleccionada(ruta_imagen)  # Guardar la imagen en la carpeta
+
+                        # Cargar la imagen guardada
+                        imagen_cargada = Image.open(ruta_guardada)
+                        imagen_cargada = imagen_cargada.convert("RGBA")  # Convertir a RGBA para Pygame
+                        imagen_cargada = pygame.image.fromstring(imagen_cargada.tobytes(), imagen_cargada.size,
+                                                                 imagen_cargada.mode)
+                        imagen_actual = redimensionar_imagen(imagen_cargada, 455)  # Redimensionar la nueva imagen
+            MANAGER.process_events(evento)
+        # Verificar si el botón "Guardar" fue presionado
+        if evento.type == pygame_gui.UI_BUTTON_PRESSED:
+            if evento.ui_element == boton_guardar:
+                guardar_datos()  # Llamar a la función para guardar los datos
+
+    actualizar_gui(evento)
+
+    dibujar_pantalla_general()
+
+    MANAGER.draw_ui(ventana)
+
     pygame.display.update()
 
-# Salir de Pygame
 pygame.quit()

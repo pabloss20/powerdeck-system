@@ -241,37 +241,3 @@ class Carta:
         with open(self.archivo_json, 'w') as f:
             json.dump(self.cartas, f, indent=4)
 
-atributos = Atributos(
-    poder=10,
-    velocidad=20,
-    magia=15,
-    defensa=25,
-    inteligencia=5,
-    altura=30,
-    fuerza=40,
-    agilidad=10,
-    salto=0,
-    resistencia=10,
-    flexibilidad=5,
-    explosividad=0,
-    carisma=20,
-    habilidad=15,
-    balance=10,
-    sabiduría=20,
-    suerte=10,
-    coordinacion=15,
-    amabilidad=5,
-    lealtad=25,
-    disciplina=10,
-    liderazgo=15,
-    prudencia=5,
-    confianza=20,
-    percepcion=15,
-    valentía=10
-)
-
-# Crear una nueva carta
-try:
-    carta = Carta("Nombre Personaje", "Descripcion de la carta.", "Nombre Variante", Raza.HUMANO, Tipo_de_Carta.ULTRA_RARA, 50, 10, atributos)
-except ValueError as e:
-    print(e)
