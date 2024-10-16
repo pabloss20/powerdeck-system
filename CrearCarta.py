@@ -59,16 +59,47 @@ def redimensionar_imagen(imagen, ancho_maximo):
     return pygame.transform.scale(imagen, (ancho_maximo, alto_maximo))
 
 
+
+def obtener_siguiente_nombre_carta():
+    """
+    Obtiene el nombre de archivo siguiente disponible para guardar una carta,
+    buscando la cantidad de cartas existentes en la carpeta destino.
+
+    :return: Un nombre de archivo predefinido en formato 'cartaN.png' o similar.
+    """
+    # Obtener la lista de archivos en la carpeta de destino
+    archivos_existentes = os.listdir(ruta_guardar_imagenes)
+
+    # Filtrar los archivos que siguen el patrón 'cartaN'
+    contador = 1
+    for archivo in archivos_existentes:
+        if archivo.startswith("carta") and archivo.endswith(".png"):
+            # Extraer el número del archivo para actualizar el contador
+            numero = int(archivo.replace("carta", "").replace(".png", ""))
+            contador = max(contador, numero + 1)
+
+    # Retornar el siguiente nombre de archivo como 'cartaN.png'
+    return f'carta{contador}.png'
+
+
 # Función para guardar la imagen seleccionada en una carpeta
 def guardar_imagen_seleccionada(ruta_imagen_original):
-    # Extraer el nombre del archivo
-    nombre_archivo = os.path.basename(ruta_imagen_original)
+    """
+    Guarda la imagen seleccionada en la carpeta destino con un nombre predefinido
+    en formato 'cartaN.png', donde N es un número incremental.
+
+    :param ruta_imagen_original: Ruta de la imagen que se desea copiar.
+    :return: Ruta donde se guardó la imagen con el nuevo nombre.
+    """
+    # Obtener el siguiente nombre de carta
+    nombre_archivo = obtener_siguiente_nombre_carta()
 
     # Ruta de destino
     ruta_guardada = os.path.join(ruta_guardar_imagenes, nombre_archivo)
 
-    # Copiar la imagen a la carpeta de destino
+    # Copiar la imagen a la carpeta de destino con el nuevo nombre
     shutil.copy(ruta_imagen_original, ruta_guardada)
+
     return ruta_guardada  # Devolver la ruta donde se guardó la imagen
 
 # Redimensionar imágenes
@@ -125,8 +156,7 @@ text_input_boxes = [
         object_id=ObjectID(class_id='@campoTT',object_id="input7"))
 ]
 
-text_input_boxes[4].set_text(fecha_actual)
-text_input_boxes[5].set_text(fecha_actual)
+
 
 select_boxes = [
     pygame_gui.elements.UIDropDownMenu(
@@ -300,7 +330,7 @@ def guardar_datos():
             prudencia=int(text_input_p5[4].get_text()),
             confianza=int(text_input_p5[5].get_text()),
             percepcion=int(text_input_p5[6].get_text()),
-            valentía=int(text_input_p5[7].get_text())
+            valentia=int(text_input_p5[7].get_text())
         )
 
         # Convertir el string de raza y tipo de carta a los correspondientes enums
@@ -323,7 +353,7 @@ def guardar_datos():
         # Confirmación de que la carta fue creada
         print(f"Carta creada: {nueva_carta.nombre_personaje}, {nueva_carta.llave}")
     except Exception as e:
-        print(e)
+        mostrar_error(e)
 
 
 
@@ -413,6 +443,16 @@ def mostrar_error(errores):
         window_title="Error de validación",
         html_message=error_text
     )
+def mostrar_exito():
+    """
+    Esta función muestra un cuadro de diálogo con estado de exito.
+    """
+    pygame_gui.windows.UIMessageWindow(
+        rect=pygame.Rect((200, 200), (400, 200)),
+        manager=MANAGER,
+        window_title="Carta Creada",
+        html_message="Se guardo la carta de manera exitosa"
+    )
 
 # Función que dibuja la pantalla general
 def dibujar_pantalla_general():
@@ -420,6 +460,8 @@ def dibujar_pantalla_general():
     ventana.fill(FONDO_COLOR)  # Rellenar con el color de fondo
     if text_input_boxes[0].get_text() != "" and text_input_boxes[2].get_text() != "":
         text_input_boxes[3].set_text(es_variante(text_input_boxes[0].get_text(), text_input_boxes[2].get_text()))
+    text_input_boxes[4].set_text(fecha_actual)
+    text_input_boxes[5].set_text(fecha_actual)
 
     # Dibujar la imagen del título
     ventana.blit(titulo_crearcarta, (ANCHO_VENTANA // 2 - titulo_crearcarta.get_width() // 2, 20))
@@ -469,8 +511,27 @@ def cambiar_visibilidad_inputboxes():
         else:
             inputbox.hide()
 
-
-
+def set_all():
+    for i in text_input_boxes:
+        try:
+            i.set_text("")
+        except:
+            pass
+    for i in text_input_p3:
+        try:
+            i.set_text("")
+        except:
+            pass
+    for i in text_input_p4:
+        try:
+            i.set_text("")
+        except:
+            pass
+    for i in select_boxes:
+        try:
+            i.set_text("")
+        except:
+            pass
 
 # Loop principal
 ejecutando = True
@@ -507,6 +568,7 @@ while ejecutando:
                     mostrar_error(errores)
                 else:
                     guardar_datos()  # Llamar a la función para guardar los datos
+                    set_all()
             elif evento.ui_element == boton_siguiente:
                 errores = validar_entradas()
                 print(errores)

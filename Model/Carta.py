@@ -56,13 +56,13 @@ class Atributos:
                  fuerza, agilidad, salto, resistencia, flexibilidad, explosividad,
                  carisma, habilidad, balance, sabiduría, suerte, coordinacion,
                  amabilidad, lealtad, disciplina, liderazgo, prudencia,
-                 confianza, percepcion, valentía):
+                 confianza, percepcion, valentia):
         # Validación de atributos
         for attr in [poder, velocidad, magia, defensa, inteligencia, altura,
                      fuerza, agilidad, salto, resistencia, flexibilidad,
                      explosividad, carisma, habilidad, balance, sabiduría,
                      suerte, coordinacion, amabilidad, lealtad, disciplina,
-                     liderazgo, prudencia, confianza, percepcion, valentía]:
+                     liderazgo, prudencia, confianza, percepcion, valentia]:
             if not (-100 <= attr <= 100):
                 raise ValueError("Los atributos deben estar entre -100 y 100.")
 
@@ -91,7 +91,7 @@ class Atributos:
         self.prudencia = prudencia
         self.confianza = confianza
         self.percepcion = percepcion
-        self.valentía = valentía
+        self.valentia = valentia
 
     @property
     def poder_total(self):
