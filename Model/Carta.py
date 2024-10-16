@@ -266,6 +266,6 @@ def es_variante(nombre_personaje, nombre_variante):
     """
     cartas = cargar_cartas()
     for carta in cartas:
-        if carta['nombre_personaje'] == nombre_personaje and carta['nombre_variante'] == nombre_variante:
+        if carta['nombre_personaje'] == nombre_personaje :
             return "Variante"
     return "No Variante"
