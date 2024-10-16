@@ -20,7 +20,7 @@ class Raza(Enum):
         DEMONIO: Represents the demon race.
     """
     HUMANO = "Humano"
-    ELFICO = "Élfico"
+    ELFICO = "Elfico"
     ENANO = "Enano"
     ORCO = "Orco"
     DRAGÓN = "Dragón"
@@ -242,3 +242,30 @@ class Carta:
         with open(self.archivo_json, 'w') as f:
             json.dump(self.cartas, f, indent=4)
 
+def cargar_cartas():
+    """
+    Carga las cartas desde el archivo Cartas.json ubicado en la carpeta raíz.
+
+    :return: Lista de cartas si el archivo existe, de lo contrario una lista vacía.
+    """
+    ruta_json = 'Cartas.json'
+    if os.path.exists(ruta_json):
+        with open(ruta_json, 'r') as archivo:
+            contenido = archivo.read()
+            if contenido:  # Verifica que el contenido no esté vacío
+                return json.loads(contenido)
+    return []
+
+def es_variante(nombre_personaje, nombre_variante):
+    """
+    Determina si una carta es variante comparando el nombre del personaje con el nombre de la variante.
+
+    :param nombre_personaje: Nombre del personaje principal.
+    :param nombre_variante: Nombre de la variante a verificar.
+    :return: True si la carta es una variante, False si no lo es.
+    """
+    cartas = cargar_cartas()
+    for carta in cartas:
+        if carta['nombre_personaje'] == nombre_personaje and carta['nombre_variante'] == nombre_variante:
+            return "Variante"
+    return "No Variante"

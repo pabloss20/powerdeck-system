@@ -1,0 +1,11 @@
+ {
+   "@campoTT": {
+     "colours":
+         {
+
+             "text_shadow":"#f0f0f0",
+             "normal_border": "#f0f0f0",
+             "normal_text": "#000000"
+         }
+   }
+ }

@@ -1,7 +1,9 @@
  {
    "@campoTXT": {
      "colours": {
-       "dark_bg":"#FFFFFF"
+       "dark_bg":"#FFFFFF",
+       "normal_bg" : "#FFFFFF",
+       "normal_text": "#000000"
      }
    }
  }

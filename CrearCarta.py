@@ -5,9 +5,10 @@ from tkinter import filedialog
 from PIL import Image
 import shutil
 import pygame_gui
-from commctrl import UPDOWN_CLASS
 from pygame_gui.core import ObjectID
-from Model.Carta import Carta, Atributos, Raza, Tipo_de_Carta
+from Model.Carta import Carta, Atributos, Raza, Tipo_de_Carta, es_variante
+from datetime import datetime
+
 # Inicializar Pygame
 pygame.init()
 
@@ -24,6 +25,9 @@ ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA), pygame.RESIZABL
 pygame.display.set_caption('Power Deck - Herramienta de Cartas')
 pantalla = 0
 imagen_seleccionada = ''
+
+# Obtener la fecha actual
+fecha_actual = datetime.now().strftime('%Y-%m-%d')
 
 # Ruta de las imágenes
 ruta_imagenes = os.path.join('imgs')
@@ -87,7 +91,7 @@ def abrir_dialogo_imagen():
     root = tk.Tk()
     root.withdraw()  # Ocultar la ventana principal
     ruta_imagen = filedialog.askopenfilename(title="Seleccionar Imagen",
-                                             filetypes=[("Imágenes", "*.png; *webp;")])
+                                             filetypes=[("Imágenes", "*.png;")])
     root.destroy()  # Destruir la ventana después de la selección
     return ruta_imagen
 
@@ -95,7 +99,7 @@ def abrir_dialogo_imagen():
 
 
 MANAGER = pygame_gui.UIManager((ANCHO_VENTANA, ALTO_VENTANA), 'text_entry_box.json')
-#MANAGER.get_theme().load_theme('text_entry_line.json')
+MANAGER.get_theme().load_theme('ui_drop_down_menu.json')
 # Crear instancias de UITextEntryLine en lugar de las cajas de texto tradicionales
 text_input_boxes = [
     pygame_gui.elements.UITextEntryLine(
@@ -116,31 +120,35 @@ text_input_boxes = [
         object_id=ObjectID(class_id='@campoTXT',object_id="input6")),
     pygame_gui.elements.UIDropDownMenu(
         starting_option="Humano",
-        options_list=["Humano", "Élfico", "Enano", "Orco", "Bestia"],
+        options_list=["Humano", "Elfico", "Enano", "Orco", "Bestia"],
         relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.83, 350, 42)), manager=MANAGER,
-        object_id=ObjectID(class_id='@campoTXT',object_id="input7"))
+        object_id=ObjectID(class_id='@campoTT',object_id="input7"))
 ]
+
+text_input_boxes[4].set_text(fecha_actual)
+text_input_boxes[5].set_text(fecha_actual)
+
 select_boxes = [
     pygame_gui.elements.UIDropDownMenu(
         options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Básica"],
         starting_option="Normal",
         relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.26, 350, 42)),
         manager=MANAGER,
-        object_id=ObjectID(class_id='@campoTXT', object_id="select1")
+        object_id=ObjectID(class_id='@campoTT', object_id="select1")
     ),
     pygame_gui.elements.UIDropDownMenu(
         options_list=["Activa", "Inactiva"],
         starting_option="Activa",
         relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.41, 350, 42)),
         manager=MANAGER,
-        object_id=ObjectID(class_id='@campoTXT', object_id="select2")
+        object_id=ObjectID(class_id='@campoTT', object_id="select2")
     ),
     pygame_gui.elements.UIDropDownMenu(
         options_list=["Activa", "Inactiva"],
         starting_option="Activa",
         relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.58, 350, 42)),
         manager=MANAGER,
-        object_id=ObjectID(class_id='@campoTXT', object_id="select3")
+        object_id=ObjectID(class_id='@campoTT', object_id="select3")
     ),
     pygame_gui.elements.UITextEntryLine(
         relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.69, 350, 42)), manager=MANAGER,
@@ -319,16 +327,99 @@ def guardar_datos():
 
 
 
-
 # Función para actualizar pygame_gui
 def actualizar_gui(evento):
     MANAGER.process_events(evento)
     MANAGER.update(clock.get_time() / 1000.0)
 
+def validar_entradas():
+    errores = []
+    atributos_nombres = [
+        "Poder", "Velocidad", "Magia", "Defensa", "Inteligencia", "Altura",
+        "Fuerza", "Agilidad", "Salto", "Resistencia", "Flexibilidad", "Explosividad",
+        "Carisma", "Habilidad", "Balance", "Sabiduría", "Suerte", "Coordinación",
+        "Amabilidad", "Lealtad", "Disciplina", "Liderazgo", "Prudencia", "Confianza",
+        "Percepción", "Valentía"
+    ]
+    # Obtener los valores de los campos de texto
+    nombre_personaje = text_input_boxes[0].get_text()
+    descripcion = text_input_boxes[1].get_text()
+    nombre_variante = text_input_boxes[2].get_text()
+    raza = text_input_boxes[6].selected_option[0]
+
+    if pantalla == 0:
+        if not nombre_personaje or not descripcion or not nombre_variante or raza == "":
+            errores.append("Hay un campo vacio en la ventana, favor llenar todos los campos")
+        # Validación del nombre del personaje y variante
+        if len(nombre_personaje) < 5 or len(nombre_personaje) > 30:
+            errores.append("El nombre del personaje debe tener entre 5 y 30 caracteres.")
+        if len(nombre_variante) < 5 or len(nombre_variante) > 30:
+            errores.append("El nombre de la variante debe tener entre 5 y 30 caracteres.")
+        # Validación de la descripción
+        if len(descripcion) > 1000:
+            errores.append("La descripción no debe exceder los 1000 caracteres.")
+
+    tipo_carta_str = select_boxes[0].selected_option[0]  # Tipo de carta
+    bonus_poder = select_boxes[4].get_text()  # Convertir a entero
+    turno_poder = select_boxes[3].get_text()
+
+    # Convertir el string de raza y tipo de carta a los correspondientes enums
+    raza = Raza[raza.upper()]  # Asegúrate que coincida con los nombres en el Enum
+    tipo_carta = Tipo_de_Carta[tipo_carta_str.replace('-', '_').upper()]
+    if pantalla == 1:
+        try:
+            if turno_poder == "" or bonus_poder == "":
+                errores.append("Favor llenar los bonos de poder")
+            if 100 < int(turno_poder) or int(turno_poder) < 0 or 100 < int(bonus_poder) or int(bonus_poder) < 0:
+                errores.append("Los bonos de poder deben estar entre 1 y 100")
+        except ValueError:
+            errores.append(f"El valor de los bonos debe ser un numero")
+    if pantalla == 2:
+        for i, text_input in enumerate(text_input_p3):
+            try:
+                valor = int(text_input.get_text())
+                if valor < -100 or valor > 100:
+                    errores.append(f"El valor de {atributos_nombres[i]} debe estar entre -100 y 100.")
+            except ValueError:
+                errores.append(f"El valor de {atributos_nombres[i]} debe ser un número entero.")
+    if pantalla == 3:
+        atributos_nombres = atributos_nombres[9:17]
+        for i, text_input in enumerate(text_input_p4):
+            try:
+                valor = int(text_input.get_text())
+                if valor < -100 or valor > 100:
+                    errores.append(f"El valor de {atributos_nombres[i]} debe estar entre -100 y 100.")
+            except ValueError:
+                errores.append(f"El valor de {atributos_nombres[i]} debe ser un número entero.")
+    if pantalla == 4:
+        atributos_nombres = atributos_nombres[17:]
+        for i, text_input in enumerate(text_input_p5):
+            try:
+                valor = int(text_input.get_text())
+                if valor < -100 or valor > 100:
+                    errores.append(f"El valor de {atributos_nombres[i]} debe estar entre -100 y 100.")
+            except ValueError:
+                errores.append(f"El valor de {atributos_nombres[i]} debe ser un número entero.")
+    return errores
+
+def mostrar_error(errores):
+    """
+    Esta función muestra un cuadro de diálogo con los errores encontrados.
+    """
+    error_text = "\n".join(errores)
+    pygame_gui.windows.UIMessageWindow(
+        rect=pygame.Rect((200, 200), (400, 200)),
+        manager=MANAGER,
+        window_title="Error de validación",
+        html_message=error_text
+    )
+
 # Función que dibuja la pantalla general
 def dibujar_pantalla_general():
 
     ventana.fill(FONDO_COLOR)  # Rellenar con el color de fondo
+    if text_input_boxes[0].get_text() != "" and text_input_boxes[2].get_text() != "":
+        text_input_boxes[3].set_text(es_variante(text_input_boxes[0].get_text(), text_input_boxes[2].get_text()))
 
     # Dibujar la imagen del título
     ventana.blit(titulo_crearcarta, (ANCHO_VENTANA // 2 - titulo_crearcarta.get_width() // 2, 20))
@@ -411,9 +502,19 @@ while ejecutando:
 
         if evento.type == pygame_gui.UI_BUTTON_PRESSED:
             if evento.ui_element == boton_guardar:
-                guardar_datos()  # Llamar a la función para guardar los datos
+                errores = validar_entradas()
+                if len(errores) > 0:
+                    mostrar_error(errores)
+                else:
+                    guardar_datos()  # Llamar a la función para guardar los datos
             elif evento.ui_element == boton_siguiente:
-                pantalla += 1
+                errores = validar_entradas()
+                print(errores)
+                if len(errores) > 0:
+                    mostrar_error(errores)
+                else:
+                    pantalla += 1
+
             elif evento.ui_element == boton_atras:
                 pantalla -= 1
 
