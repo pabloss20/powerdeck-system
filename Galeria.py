@@ -29,6 +29,7 @@ lupa_imagen = pygame.transform.scale(lupa_imagen, (nuevo_ancho_lupa, nuevo_alto_
 # Crear fuente
 fuente = pygame.freetype.SysFont("Comic Sans MS", 24)
 fuente_nombre = pygame.freetype.SysFont("Comic Sans MS", 18)
+fuente_pequena = pygame.freetype.SysFont("Comic Sans MS", 16)
 
 # Elementos de la interfaz
 barra_busqueda = pygame.Rect(100, 220, 400, 40)
@@ -45,6 +46,7 @@ mostrar_filtros = False
 cartas = []  # Lista para almacenar las imágenes de las cartas y sus nombres
 cartas_originales = []  # Lista para almacenar el orden original de las cartas
 filtro_seleccionado = "Filtros"
+
 
 # Función para cargar las cartas desde el archivo JSON
 def cargar_cartas():
@@ -91,6 +93,12 @@ def rect_sin_redondear(surface, color_fondo, rect):
 # Función para centrar el texto en un rectángulo
 def centrar_texto(surface, text, rect, font_color=(0, 0, 0)):
     text_surface, text_rect = fuente.render(text, font_color)
+    text_rect.center = rect.center
+    surface.blit(text_surface, text_rect)
+
+# Función para centrar el texto en un rectángulo con fuente pequeña
+def centrar_texto_pequeno(surface, text, rect, font_color=(0, 0, 0)):
+    text_surface, text_rect = fuente_pequena.render(text, font_color)
     text_rect.center = rect.center
     surface.blit(text_surface, text_rect)
 
@@ -167,16 +175,13 @@ while corriendo:
 
     # Dibujar barra de búsqueda con esquinas redondeadas
     rect_redondeado(ventana, (255, 255, 255), barra_busqueda, RADIO_ESQUINA)
-    texto_derecha(ventana, texto_busqueda, barra_busqueda)
+    centrar_texto(ventana, texto_busqueda, barra_busqueda)
+    ventana.blit(lupa_imagen, (barra_busqueda.x + barra_busqueda.width - 390, barra_busqueda.y + 5))
 
-    # Dibujar la imagen de la lupa en la barra de búsqueda
-    ventana.blit(lupa_imagen, (110, 225))
-
-    # Dibujar las cartas
     dibujar_cartas()
 
-    # Dibujar menú de filtros
-    rect_redondeado(ventana, (255, 255, 255), filtros_menu, RADIO_ESQUINA)
+    # Dibujar menú de filtros sin esquinas redondeadas
+    rect_sin_redondear(ventana, (255, 255, 255), filtros_menu)
     centrar_texto(ventana, filtro_seleccionado, filtros_menu)
 
     # Si se están mostrando los filtros, dibujar la opción de "Alfabético" y "Eliminar Filtros"
@@ -189,9 +194,9 @@ while corriendo:
         # Opción "Eliminar Filtros"
         opcion_eliminar_filtros_rect = pygame.Rect(filtros_menu.x, filtros_menu.y + 80, filtros_menu.width, 40)
         rect_sin_redondear(ventana, (255, 255, 255), opcion_eliminar_filtros_rect)
-        centrar_texto(ventana, "Eliminar Filtros", opcion_eliminar_filtros_rect)
+        centrar_texto_pequeno(ventana, "Eliminar Filtros", opcion_eliminar_filtros_rect)
 
-    # Dibujar botones
+    # Dibujar botones con esquinas redondeadas
     rect_redondeado(ventana, (255, 255, 255), boton_refrescar, RADIO_ESQUINA)
     centrar_texto(ventana, "Refrescar", boton_refrescar)
 
