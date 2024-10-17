@@ -130,7 +130,7 @@
         },
         "llave": "C-BbG8bJtPegnA-V-B8rH1vN0IrlA",
         "es_variante": false
-    }, 
+    },
     {
         "nombre_personaje": "d",
         "descripcion": "dasdadas",
@@ -305,6 +305,50 @@
             "valent\u00eda": 50
         },
         "llave": "C-BbG8bJtPegnA-V-B8rH1vN0IrlA",
+        "es_variante": false
+    },
+    {
+        "nombre_personaje": "cartax",
+        "descripcion": "Prueba de una carta",
+        "nombre_variante": "Magos",
+        "fecha_creacion": "2024-10-17T12:48:28.048986",
+        "fecha_modificacion": "2024-10-17T12:48:28.048986",
+        "raza": "Bestia",
+        "imagen": "Cartas\\carta2.png",
+        "tipo_carta": "Ultra-Rara",
+        "activa_en_juego": true,
+        "activa_en_sobres": true,
+        "turno_poder": 23,
+        "bonus_poder": 32,
+        "atributos": {
+            "poder": 23,
+            "velocidad": 3,
+            "magia": 23,
+            "defensa": 3,
+            "inteligencia": 23,
+            "altura": 23,
+            "fuerza": 23,
+            "agilidad": 23,
+            "salto": 23,
+            "resistencia": 23,
+            "flexibilidad": 23,
+            "explosividad": 23,
+            "carisma": 32,
+            "habilidad": 23,
+            "balance": 23,
+            "sabidur\u00eda": 23,
+            "suerte": 23,
+            "coordinacion": 23,
+            "amabilidad": 23,
+            "lealtad": 32,
+            "disciplina": 23,
+            "liderazgo": 23,
+            "prudencia": 23,
+            "confianza": 23,
+            "percepcion": 32,
+            "valentia": 23
+        },
+        "llave": "C-7B5LFATVSCTt-V-ReXimVM5VUmD",
         "es_variante": false
     }
 ]
