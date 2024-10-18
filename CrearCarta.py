@@ -420,7 +420,7 @@ def iniciar_crear_carta():
                 except ValueError:
                     errores.append(f"El valor de {atributos_nombres[i]} debe ser un número entero.")
         if pantalla == 3:
-            atributos_nombres = atributos_nombres[9:16]
+            atributos_nombres = atributos_nombres[9:18]
             for i, text_input in enumerate(text_input_p4):
                 try:
                     valor = int(text_input.get_text())
