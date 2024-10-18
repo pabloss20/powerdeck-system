@@ -162,7 +162,7 @@ def iniciar_crear_carta():
 
     select_boxes = [
         pygame_gui.elements.UIDropDownMenu(
-            options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Básica"],
+            options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Basica"],
             starting_option="Normal",
             relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.26, 350, 42)),
             manager=MANAGER,
@@ -420,7 +420,7 @@ def iniciar_crear_carta():
                 except ValueError:
                     errores.append(f"El valor de {atributos_nombres[i]} debe ser un número entero.")
         if pantalla == 3:
-            atributos_nombres = atributos_nombres[9:17]
+            atributos_nombres = atributos_nombres[9:16]
             for i, text_input in enumerate(text_input_p4):
                 try:
                     valor = int(text_input.get_text())
