@@ -103,7 +103,7 @@ class Carta:
     class Carta:
         """
     def __init__(self, nombre_personaje, descripcion, nombre_variante, raza, imagen, tipo_carta,
-                 turno_poder, bonus_poder, atributos, archivo_json='cartas.json'):
+                 turno_poder, bonus_poder, atributos, archivo_json='Files/cartas.json'):
         """
         :param nombre_personaje: Nombre del personaje asociado a la carta.
         :param descripcion: Descripción de la carta y del personaje.
@@ -248,7 +248,7 @@ def cargar_cartas():
 
     :return: Lista de cartas si el archivo existe, de lo contrario una lista vacía.
     """
-    ruta_json = 'Cartas.json'
+    ruta_json = 'Files/cartas.json'
     if os.path.exists(ruta_json):
         with open(ruta_json, 'r') as archivo:
             contenido = archivo.read()
