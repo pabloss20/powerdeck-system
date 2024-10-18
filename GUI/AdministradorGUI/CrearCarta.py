@@ -8,7 +8,7 @@ import pygame_gui
 from pygame_gui.core import ObjectID
 from Model.Carta import Carta, Atributos, Raza, Tipo_de_Carta, es_variante
 from datetime import datetime
-import main
+
 
 def iniciar_crear_carta():
     # Inicializar Pygame
@@ -32,8 +32,8 @@ def iniciar_crear_carta():
     fecha_actual = datetime.now().strftime('%Y-%m-%d')
 
     # Ruta de las imágenes
-    ruta_imagenes = os.path.join('imgs')
-    ruta_guardar_imagenes = os.path.join('Cartas')  # Carpeta para guardar las imágenes
+    ruta_imagenes = os.path.join('../../imgs')
+    ruta_guardar_imagenes = os.path.join('../../Cartas')  # Carpeta para guardar las imágenes
 
     # Crear la carpeta de destino si no existe
     if not os.path.exists(ruta_guardar_imagenes):
@@ -131,7 +131,7 @@ def iniciar_crear_carta():
 
 
 
-    MANAGER = pygame_gui.UIManager((ANCHO_VENTANA, ALTO_VENTANA), 'text_entry_box.json')
+    MANAGER = pygame_gui.UIManager((ANCHO_VENTANA, ALTO_VENTANA), '../../Files/text_entry_box.json')
     MANAGER.get_theme().load_theme('ui_drop_down_menu.json')
     # Crear instancias de UITextEntryLine en lugar de las cajas de texto tradicionales
     text_input_boxes = [

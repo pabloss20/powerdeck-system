@@ -1,6 +1,7 @@
 import pygame
 import sys
-import CrearCarta
+from GUI.AdministradorGUI import CrearCarta
+
 
 def main():
     # Inicializar pygame

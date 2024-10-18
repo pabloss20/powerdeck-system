@@ -17,11 +17,11 @@ ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA), pygame.RESIZABL
 pygame.display.set_caption("Power Deck - Galería de Cartas")
 
 # Cargar la imagen del título y reducir su tamaño en un 25%
-titulo_imagen = pygame.image.load("imgs/titulo_crearcarta.png").convert_alpha()
+titulo_imagen = pygame.image.load("../../imgs/titulo_crearcarta.png").convert_alpha()
 titulo_imagen = pygame.transform.scale(titulo_imagen, (300, 150))  # Tamaño reducido
 
 # Cargar la imagen de la lupa y reducir su tamaño en un 90%
-lupa_imagen = pygame.image.load("imgs/lupa.png").convert_alpha()
+lupa_imagen = pygame.image.load("../../imgs/lupa.png").convert_alpha()
 nuevo_ancho_lupa = int(lupa_imagen.get_width() * 0.03)
 nuevo_alto_lupa = int(lupa_imagen.get_height() * 0.03)
 lupa_imagen = pygame.transform.scale(lupa_imagen, (nuevo_ancho_lupa, nuevo_alto_lupa))
