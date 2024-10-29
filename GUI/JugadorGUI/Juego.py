@@ -2,7 +2,6 @@ import pygame
 import sys
 
 def main():
-
     pygame.init()
 
     # Colores
@@ -22,27 +21,64 @@ def main():
 
     # Variables de estado
     pantalla_actual = "principal"
+    campos_texto = {
+        "nombre": "",
+        "apellido": "",
+        "correo": "",
+        "contrasena": "",
+        "confirmar_contrasena": "",
+        "edad": "",
+        "usuario": ""
+    }
+    cursor_visible = True
+    reloj = pygame.time.Clock()
 
     # Función para dibujar un botón
-    def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo, ventana):
+    def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo):
         pygame.draw.rect(ventana, color_fondo, (x, y, ancho, alto))
         pygame.draw.rect(ventana, color_borde, (x, y, ancho, alto), 5)
         ventana.blit(texto, (x + (ancho - texto.get_width()) // 2, y + (alto - texto.get_height()) // 2))
 
-    # Función para mostrar la pantalla principal
+    # Funciones para mostrar cada pantalla
     def pantalla_principal():
-        # Dibujar título
+        ventana.fill(NEGRO)
         titulo = fuente_texto.render('POWER DECK', True, BLANCO)
         subtitulo = fuente_texto.render('HERRAMIENTA DE CARTAS', True, BLANCO)
         ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
         ventana.blit(subtitulo, ((ANCHO - subtitulo.get_width()) // 2, 130))
 
-        # Dibujar botones
-        dibujar_boton(fuente_texto.render('Registrarse', True, BLANCO),
-                      ANCHO // 2 - 150, ALTO // 2 - 100, 300, 100, AZUL_CLARO, NEGRO, ventana)
+        dibujar_boton(fuente_texto.render('Registrarse', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 - 100, 300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Iniciar Sesión', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Salir', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 200, 300, 100, AZUL_CLARO, NEGRO)
 
-        dibujar_boton(fuente_texto.render('Iniciar Sesión', True, BLANCO),
-                      ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO, ventana)
+    def pantalla_registrar():
+        ventana.fill(NEGRO)
+        titulo = fuente_texto.render('Registro de Usuario', True, BLANCO)
+        ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
+
+        # Dibujar campos de texto
+        y_offset = 150
+        for campo, valor in campos_texto.items():
+            texto_campo = fuente_texto.render(f'{campo.capitalize()}: {valor}', True, BLANCO)
+            ventana.blit(texto_campo, (ANCHO // 2 - 200, y_offset))
+            y_offset += 50
+
+        # Dibujar botones
+        dibujar_boton(fuente_texto.render('Confirmar Registro', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 100, 300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 250, 300, 100, AZUL_CLARO, NEGRO)
+
+    def pantalla_cartas_iniciales():
+        ventana.fill(NEGRO)
+        titulo = fuente_texto.render('Cartas Iniciales', True, BLANCO)
+        ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
+        dibujar_boton(fuente_texto.render('Ingresar', True, BLANCO), ANCHO // 2 - 150, ALTO // 2, 300, 100, AZUL_CLARO, NEGRO)
+
+    def pantalla_ingresar():
+        ventana.fill(NEGRO)
+        titulo = fuente_texto.render('Iniciar Sesión', True, BLANCO)
+        ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
+        dibujar_boton(fuente_texto.render('Confirmar', True, BLANCO), ANCHO // 2 - 150, ALTO // 2, 300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 150, 300, 100, AZUL_CLARO, NEGRO)
 
     # Bucle principal
     while True:
@@ -51,34 +87,58 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-            # Manejar eventos de la pantalla actual
-            if pantalla_actual == "principal":
-                if evento.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    # Verificar si se ha hecho clic en el botón "Crear Carta"
-                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 - 100 <= mouse_pos[1] <= ALTO // 2:
-                        pantalla_actual = "crear_carta"  # Cambiar a la pantalla de creación de cartas
-                    # Verificar si se ha hecho clic en el botón "Ver Álbum"
-                    elif ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[1] <= ALTO // 2 + 150:
-                        pantalla_actual = "ver_album"  # Cambiar a la pantalla del álbum
-            elif pantalla_actual == "crear_carta":
-                pass
-            elif pantalla_actual == "ver_album":
-                pass
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
 
-        # Rellenar la pantalla de negro
+                if pantalla_actual == "principal":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO // 2 - 100 <= mouse_pos[1] <= ALTO // 2:
+                            pantalla_actual = "registrar"
+                        elif ALTO // 2 + 50 <= mouse_pos[1] <= ALTO // 2 + 150:
+                            pantalla_actual = "ingresar"
+                        elif ALTO // 2 + 200 <= mouse_pos[1] <= ALTO // 2 + 300:
+                            pygame.quit()
+                            sys.exit()
+
+                elif pantalla_actual == "registrar":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO // 2 + 100 <= mouse_pos[1] <= ALTO // 2 + 200:
+
+                            pantalla_actual = "cartas_iniciales"
+                        elif ALTO // 2 + 250 <= mouse_pos[1] <= ALTO // 2 + 350:
+                            pantalla_actual = "principal"
+
+                elif pantalla_actual == "cartas_iniciales":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 <= mouse_pos[1] <= ALTO // 2 + 100:
+                        pantalla_actual = "ingresar"
+
+                elif pantalla_actual == "ingresar":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO // 2 <= mouse_pos[1] <= ALTO // 2 + 100:
+                            pantalla_actual = "menu"
+                        elif ALTO // 2 + 150 <= mouse_pos[1] <= ALTO // 2 + 250:
+                            pantalla_actual = "principal"
+
+            if evento.type == pygame.KEYDOWN:
+                if pantalla_actual == "registrar":
+
+                    for campo in campos_texto.keys():
+                        if evento.unicode.isprintable() and len(campos_texto[campo]) < 20:
+                            campos_texto[campo] += evento.unicode
+                        elif evento.key == pygame.K_BACKSPACE:
+                            campos_texto[campo] = campos_texto[campo][:-1]
+
         ventana.fill(NEGRO)
 
-        # Dibujar la pantalla correspondiente
         if pantalla_actual == "principal":
             pantalla_principal()
-        elif pantalla_actual == "crear_carta":
-           pass
-        elif pantalla_actual == "ver_album":
+        elif pantalla_actual == "registrar":
+            pantalla_registrar()
+        elif pantalla_actual == "cartas_iniciales":
+            pantalla_cartas_iniciales()
+        elif pantalla_actual == "ingresar":
+            pantalla_ingresar()
 
-            pass
-
-        # Actualizar la pantalla
         pygame.display.update()
 
 if __name__ == "__main__":
