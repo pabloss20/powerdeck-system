@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 import sys
 from pygame_gui.core import ObjectID
+from Model.Jugador import Jugador
 
 
 def main():
@@ -32,7 +33,8 @@ def main():
         "contrasena": "",
         "confirmar_contrasena": "",
         "edad": "",
-        "usuario": ""
+        "usuario": "",
+        "pais" : ""
     }
 
     # Crear instancias de UITextEntryLine solo una vez para la pantalla de registro
@@ -49,15 +51,18 @@ def main():
         "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42),
                                                           manager=manager,
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4")),
-        "edad": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(1100, 350, 350, 42),
+        "confirmar_contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(1100, 350, 350, 42),
                                                           manager=manager,
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4")),
-        "confirmar_contrasena": pygame_gui.elements.UITextEntryLine(
+        "edad": pygame_gui.elements.UITextEntryLine(
             relative_rect=pygame.Rect(860, 400, 350, 42), manager=manager,
             object_id=ObjectID(class_id='@campoTXT', object_id="input5")),
         "usuario": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860,450, 350, 42),
                                                     manager=manager,
-                                                    object_id=ObjectID(class_id='@campoTXT', object_id="input6"))
+                                                    object_id=ObjectID(class_id='@campoTXT', object_id="input6")),
+        "pais": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 500, 350, 42),
+                                                       manager=manager,
+                                                       object_id=ObjectID(class_id='@campoTXT', object_id="input6"))
     }
 
     # Variables para mostrar/ocultar campos de texto
@@ -85,6 +90,17 @@ def main():
         dibujar_boton(fuente_texto.render('Salir', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 200, 300, 100,
                       AZUL_CLARO, NEGRO)
 
+    # Función para activar o desactivar los inputboxes según la pantalla
+    def cambiar_visibilidad_inputboxes(pantalla):
+        for inputbox in text_inputs:
+            if pantalla == 0:
+                # Variables para mostrar/ocultar campos de texto
+                for text_input in text_inputs.values():
+                    text_input.show()
+            else:
+                # Variables para mostrar/ocultar campos de texto
+                for text_input in text_inputs.values():
+                    text_input.hide()
     def pantalla_registrar():
         ventana.fill(NEGRO)
         # Dibujar campos de texto
@@ -105,6 +121,58 @@ def main():
         dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100,
                       AZUL_CLARO, NEGRO)
 
+    def btn_listo():
+        try:
+            # Extraer los valores de cada campo en text_inputs
+            text_input = {
+                "nombre": text_inputs["nombre"].get_text(),
+                "apellido": text_inputs["apellido"].get_text(),
+                "correo": text_inputs["correo"].get_text(),
+                "contrasena": text_inputs["contrasena"].get_text(),
+                "confirmar_contrasena": text_inputs["confirmar_contrasena"].get_text(),
+                "edad": text_inputs["edad"].get_text(),
+                "pais": text_inputs["pais"].get_text(),
+                "nombre_usuario": text_inputs["usuario"].get_text()
+            }
+            # Crear una instancia de la clase Mazo con el nombre proporcionado
+            nuevo_jugador = Jugador(
+                nombre = text_input["nombre"],
+                apellido= text_input["apellido"],
+                correo = text_input["correo"],
+                contrasena= text_input["contrasena"],
+                confirmar_contrasena= text_input["confirmar_contrasena"],
+                edad= text_input["edad"],
+                imagen_perfil= "../img",
+                pais= text_input["pais"],
+                nombre_usuario= text_input["nombre_usuario"]
+            )
+            # Crear un cuadro de diálogo para mostrar el error al usuario
+            pygame_gui.windows.UIConfirmationDialog(
+                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                manager=manager,
+                window_title="Exito!",
+                action_long_desc=str("Usuario creado con exito"),
+                action_short_name="OK",
+                blocking=True
+            )
+            btnl = True
+
+            # Mostrar confirmación al usuario
+
+        except ValueError as e:
+            dialogo_exito_abierto = False
+            print("Error al registrar jugador:", e)
+
+            # Crear un cuadro de diálogo para mostrar el error al usuario
+            pygame_gui.windows.UIConfirmationDialog(
+                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                manager=manager,
+                window_title="Error",
+                action_long_desc=str(e),
+                action_short_name="OK",
+                blocking=True
+            )
+
     def pantalla_ingresar():
         ventana.fill(NEGRO)
         titulo = fuente_texto.render('Iniciar Sesión', True, BLANCO)
@@ -123,7 +191,7 @@ def main():
                 sys.exit()
 
             manager.process_events(evento)
-            if evento.type == pygame.MOUSEBUTTONDOWN:
+            if evento.type == pygame.MOUSEBUTTONUP:
                 mouse_pos = pygame.mouse.get_pos()
                 if pantalla_actual == "principal":
                     if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
@@ -135,11 +203,26 @@ def main():
                             pygame.quit()
                             sys.exit()
 
-            elif evento.type == pygame.KEYDOWN:
-                if pantalla_actual == "registrar" and evento.key == pygame.K_RETURN:
-                    # Obtener datos de text_inputs
-                    for campo, text_input in text_inputs.items():
-                        print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
+                elif pantalla_actual == "registrar":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
+                            for campo, text_input in text_inputs.items():
+                                print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
+                                btn_listo()
+                        elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
+                            pantalla_actual = "principal"
+                            cambiar_visibilidad_inputboxes(1)
+
+                elif pantalla_actual == "cartas_iniciales":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO_VENTANA // 2 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 100:
+                        pantalla_actual = "ingresar"
+
+                elif pantalla_actual == "ingresar":
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO_VENTANA // 2 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 100:
+                            pantalla_actual = "menu"
+                        elif ALTO_VENTANA // 2 + 150 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 250:
+                            pantalla_actual = "principal"
 
         ventana.fill(NEGRO)
 

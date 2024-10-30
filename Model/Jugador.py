@@ -1,7 +1,9 @@
 import string
 import random
 from datetime import datetime
-from  JsonHandler import JsonHandler
+from  Model.JsonHandler import JsonHandler
+import re
+
 
 class Jugador:
     def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, imagen_perfil, pais, nombre_usuario):
@@ -19,7 +21,7 @@ class Jugador:
         self.id = self.generar_id()
 
         # Inicializar JsonHandler aquí
-        self.jsonhandler = JsonHandler('../Files/jugadores.json')
+        self.jsonhandler = JsonHandler('../../Files/jugadores.json')
         self.registrar_jugador()
 
     def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario):
