@@ -143,19 +143,6 @@ class Carta:
         # Agregar la nueva carta al JSON
         self.agregar_carta()
 
-    def cargar_cartas(self):
-        """
-        Loads cards from a JSON file if it exists and contains data.
-
-        :return: A list of cards loaded from the JSON file, or an empty list if the file doesn't exist or is empty.
-        """
-        if os.path.exists(self.archivo_json):
-            with open(self.archivo_json, 'r') as f:
-                contenido = f.read()
-                if contenido:  # Verifica que el contenido no esté vacío
-                    return json.loads(contenido)
-        return []
-
     def validar_datos(self, nombre_personaje, descripcion, nombre_variante, raza, tipo_carta,
                       turno_poder, bonus_poder, atributos):
         """
@@ -242,17 +229,16 @@ class Carta:
         with open(self.archivo_json, 'w') as f:
             json.dump(self.cartas, f, indent=4)
 
-def cargar_cartas():
+def cargar_cartas(self):
     """
     Carga las cartas desde el archivo Cartas.json ubicado en la carpeta raíz.
 
     :return: Lista de cartas si el archivo existe, de lo contrario una lista vacía.
     """
-    ruta_json = 'Files/cartas.json'
-    if os.path.exists(ruta_json):
-        with open(ruta_json, 'r') as archivo:
+    if os.path.exists(self.archivo_json):
+        with open(self.archivo_json, 'r') as archivo:
             contenido = archivo.read()
-            if contenido:  # Verifica que el contenido no esté vacío
+            if contenido:
                 return json.loads(contenido)
     return []
 

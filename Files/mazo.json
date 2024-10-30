@@ -1,0 +1,122 @@
+[
+    {
+        "nombre": "MazoEjemplo",
+        "fecha_creacion": "2024-10-30T08:00:22.607943",
+        "fecha_modificacion": "2024-10-30T08:00:22.607943",
+        "cartas": [
+            "carta-1",
+            "carta-11",
+            "carta-13",
+            "carta-4",
+            "carta-12",
+            "carta-9",
+            "carta-10",
+            "carta-7",
+            "carta-0",
+            "carta-2",
+            "carta-6",
+            "carta-14",
+            "carta-8",
+            "carta-3",
+            "carta-5"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-gQyGyzRfUG4W"
+    },
+    {
+        "nombre": "Nombre del Mazo",
+        "fecha_creacion": "2024-10-30T11:46:32.224405",
+        "fecha_modificacion": "2024-10-30T11:46:32.224405",
+        "cartas": [
+            "C-qCICaPYdqYUj-V-1oPAawPAlrzL",
+            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaPedqYUj-V-1oPAawPAlrzL",
+            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
+            "C-0fJCnpZqtsND-V-RxFckwkzO8KH",
+            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL",
+            "C-0fJCnpZ9tsND-V-RxFckhkzO8KH",
+            "C-2sEtiVqPy4Y3-V-hxA8UeTnNZzZ",
+            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-qCICaaYdqYUj-V-1oPAawPAlrzL",
+            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-FOZa79VkI0IB"
+    },
+    {
+        "nombre": "Kaosd",
+        "fecha_creacion": "2024-10-30T11:55:38.566243",
+        "fecha_modificacion": "2024-10-30T11:55:38.566243",
+        "cartas": [
+            "C-0fJCnpZqtsND-V-RxFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RfFckwkzO8KH",
+            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAawPAirzL",
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqmUj-V-1oPAawPAlrzL",
+            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RxFckhkzO8KH",
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
+            "C-qCICaPYhqYUj-V-1oPAawPAlrzL"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-JgXb7IHSKkdy"
+    },
+    {
+        "nombre": "Kospert",
+        "fecha_creacion": "2024-10-30T11:59:37.034803",
+        "fecha_modificacion": "2024-10-30T11:59:37.034803",
+        "cartas": [
+            "C-0fJCnpZqtsND-V-RxFckwkzO8KH",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
+            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
+            "C-qCICaPYdqmUj-V-1oPAawPAlrzL",
+            "C-qCICaaYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYhqYUj-V-1oPAawPAlrzL",
+            "C-2sEtiVqPy4Y3-V-hxA8UeTnNZzZ",
+            "C-qCICaPedqYUj-V-1oPAawPAlrzL",
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-LPLYg2lkYMYX"
+    },
+    {
+        "nombre": "FFdfvf",
+        "fecha_creacion": "2024-10-30T12:04:23.381345",
+        "fecha_modificacion": "2024-10-30T12:04:23.381345",
+        "cartas": [
+            "C-2sEtiVqPy4Y3-V-hxA8UeTnNZzZ",
+            "C-qCICaPYdqmUj-V-1oPAawPAlrzL",
+            "C-qCICaPYhqYUj-V-1oPAawPAlrzL",
+            "C-0fJCnpZ9tsND-V-RfFckwkzO8KH",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaaYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
+            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RxFckhkzO8KH",
+            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-bj0Tfj3WbzmJ"
+    }
+]
