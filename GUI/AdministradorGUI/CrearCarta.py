@@ -10,7 +10,6 @@ from Model.Carta import Carta, Atributos, Raza, Tipo_de_Carta, es_variante
 from datetime import datetime
 import AdministradorGUI
 
-
 def iniciar_crear_carta():
     # Inicializar Pygame
     pygame.init()
@@ -158,8 +157,6 @@ def iniciar_crear_carta():
             relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.83, 350, 42)), manager=MANAGER,
             object_id=ObjectID(class_id='@campoTT',object_id="input7"))
     ]
-
-
 
     select_boxes = [
         pygame_gui.elements.UIDropDownMenu(
