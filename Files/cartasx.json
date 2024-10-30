@@ -1,0 +1,22 @@
+[
+    {"nombre_personaje": "Personaje1", "descripcion": "Carta1", "nombre_variante": "VarianteA", "tipo_carta": "Ultrarara"},
+    {"nombre_personaje": "Personaje2", "descripcion": "Carta2", "nombre_variante": "VarianteB", "tipo_carta": "Muy rara"},
+    {"nombre_personaje": "Personaje3", "descripcion": "Carta3", "nombre_variante": "VarianteC", "tipo_carta": "Rara"},
+    {"nombre_personaje": "Personaje4", "descripcion": "Carta4", "nombre_variante": "VarianteD", "tipo_carta": "Normal"},
+    {"nombre_personaje": "Personaje5", "descripcion": "Carta5", "nombre_variante": "VarianteE", "tipo_carta": "Basica"},
+    {"nombre_personaje": "Personaje6", "descripcion": "Carta6", "nombre_variante": "VarianteF", "tipo_carta": "Ultrarara"},
+    {"nombre_personaje": "Personaje7", "descripcion": "Carta7", "nombre_variante": "VarianteG", "tipo_carta": "Muy rara"},
+    {"nombre_personaje": "Personaje8", "descripcion": "Carta8", "nombre_variante": "VarianteH", "tipo_carta": "Rara"},
+    {"nombre_personaje": "Personaje9", "descripcion": "Carta9", "nombre_variante": "VarianteI", "tipo_carta": "Normal"},
+    {"nombre_personaje": "Personaje10", "descripcion": "Carta10", "nombre_variante": "VarianteJ", "tipo_carta": "Basica"},
+    {"nombre_personaje": "Personaje11", "descripcion": "Carta11", "nombre_variante": "VarianteK", "tipo_carta": "Ultrarara"},
+    {"nombre_personaje": "Personaje12", "descripcion": "Carta12", "nombre_variante": "VarianteL", "tipo_carta": "Muy rara"},
+    {"nombre_personaje": "Personaje13", "descripcion": "Carta13", "nombre_variante": "VarianteM", "tipo_carta": "Rara"},
+    {"nombre_personaje": "Personaje14", "descripcion": "Carta14", "nombre_variante": "VarianteN", "tipo_carta": "Normal"},
+    {"nombre_personaje": "Personaje15", "descripcion": "Carta15", "nombre_variante": "VarianteO", "tipo_carta": "Basica"},
+    {"nombre_personaje": "Personaje16", "descripcion": "Carta16", "nombre_variante": "VarianteP", "tipo_carta": "Rara"},
+    {"nombre_personaje": "Personaje17", "descripcion": "Carta17", "nombre_variante": "VarianteQ", "tipo_carta": "Normal"},
+    {"nombre_personaje": "Personaje18", "descripcion": "Carta18", "nombre_variante": "VarianteR", "tipo_carta": "Basica"},
+    {"nombre_personaje": "Personaje19", "descripcion": "Carta19", "nombre_variante": "VarianteS", "tipo_carta": "Normal"},
+    {"nombre_personaje": "Personaje20", "descripcion": "Carta20", "nombre_variante": "VarianteT", "tipo_carta": "Basica"}
+]
