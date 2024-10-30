@@ -208,14 +208,13 @@ def nuevo_mazo():
             manager.process_events(event)
 
             if event.type == pygame.USEREVENT:
-                if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
+                if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED and dialogo_exito_abierto:
                     # Llama a la función iniciar_crear_mazo al hacer clic en "OK"
                     CrearMazo.iniciar_crear_mazo()
                     dialogo_exito_abierto = False
 
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == boton_atras:
-
                         CrearMazo.iniciar_crear_mazo()
                     elif event.ui_element == boton_listo:
                         nombre_del_mazo = input_nombre_mazo.get_text()
