@@ -4,7 +4,6 @@ import sys
 from pygame_gui.core import ObjectID
 from Model.Jugador import Jugador
 
-
 def main():
     pygame.init()
 
@@ -35,6 +34,22 @@ def main():
         "edad": "",
         "usuario": "",
         "pais" : ""
+    }
+
+    campos_texto_login = {
+        "correo": "",
+        "contrasena": ""
+    }
+
+    # Crear instancias de UITextEntryLine solo una vez para la pantalla de inicio de sesion
+    text_inputs_login = {
+
+        "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 250, 350, 42),
+                                                      manager=manager,
+                                                      object_id=ObjectID(class_id='@campoTXT', object_id="input3")),
+        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42),
+                                                          manager=manager,
+                                                          object_id=ObjectID(class_id='@campoTXT', object_id="input4"))
     }
 
     # Crear instancias de UITextEntryLine solo una vez para la pantalla de registro
@@ -69,6 +84,9 @@ def main():
     for text_input in text_inputs.values():
         text_input.hide()
 
+    for text_inputs_login in text_inputs_login.values():
+        text_inputs_login.hide()
+
     # Función para dibujar un botón
     def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo):
         pygame.draw.rect(ventana, color_fondo, (x, y, ancho, alto))
@@ -101,6 +119,19 @@ def main():
                 # Variables para mostrar/ocultar campos de texto
                 for text_input in text_inputs.values():
                     text_input.hide()
+
+    # Función para activar o desactivar los inputboxes según la pantalla
+    def cambiar_visibilidad_inputboxes_login(pantalla):
+        for inputbox in text_inputs_login:
+            if pantalla == 0:
+                # Variables para mostrar/ocultar campos de texto
+                for text_input in text_inputs_login.values():
+                    text_inputs_login.show()
+            else:
+                # Variables para mostrar/ocultar campos de texto
+                for text_input in text_inputs_login.values():
+                    text_inputs_login.hide()
+
     def pantalla_registrar():
         ventana.fill(NEGRO)
         # Dibujar campos de texto
@@ -175,11 +206,23 @@ def main():
 
     def pantalla_ingresar():
         ventana.fill(NEGRO)
-        titulo = fuente_texto.render('Iniciar Sesión', True, BLANCO)
+        # Dibujar campos de texto
+        y_offset = 150
+        for campo, valor in campos_texto_login.items():
+            texto_campo = fuente_texto.render(f'{campo.capitalize()}: {valor}', True, BLANCO)
+            ventana.blit(texto_campo, (ANCHO // 2 - 200, y_offset))
+            y_offset += 50
+        titulo = fuente_texto.render('Inicio de Sesion', True, BLANCO)
         ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
-        dibujar_boton(fuente_texto.render('Confirmar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2, 300, 100,
-                      AZUL_CLARO, NEGRO)
 
+        for text_input in text_inputs_login.values():
+            text_input.show()
+
+        # Dibujar botones
+        dibujar_boton(fuente_texto.render('Confirmar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 100,
+                      300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100,
+                      AZUL_CLARO, NEGRO)
     # Bucle principal
     reloj = pygame.time.Clock()
     while True:
@@ -199,6 +242,7 @@ def main():
                             pantalla_actual = "registrar"
                             for text_input in text_inputs.values():
                                 text_input.show()
+
                         elif ALTO_VENTANA // 2 + 200 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 300:
                             pygame.quit()
                             sys.exit()
@@ -219,10 +263,13 @@ def main():
 
                 elif pantalla_actual == "ingresar":
                     if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
-                        if ALTO_VENTANA // 2 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 100:
-                            pantalla_actual = "menu"
-                        elif ALTO_VENTANA // 2 + 150 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 250:
+                        if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
+                            for campo, text_input in text_inputs_login.items():
+                                print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
+                                btn_listo()
+                        elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
+                            cambiar_visibilidad_inputboxes_login(1)
 
         ventana.fill(NEGRO)
 
