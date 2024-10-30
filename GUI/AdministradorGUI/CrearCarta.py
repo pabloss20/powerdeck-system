@@ -158,8 +158,6 @@ def iniciar_crear_carta():
             object_id=ObjectID(class_id='@campoTT',object_id="input7"))
     ]
 
-
-
     select_boxes = [
         pygame_gui.elements.UIDropDownMenu(
             options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Basica"],
