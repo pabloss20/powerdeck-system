@@ -3,9 +3,11 @@ import pygame_gui
 import sys
 from pygame_gui.core import ObjectID
 from Model.Jugador import Jugador
+from Model.JsonHandler import JsonHandler
 
 def main():
     pygame.init()
+    jsonhandler = JsonHandler('../../Files/jugadores.json')
 
     # Colores
     NEGRO = (0, 0, 0)
@@ -44,10 +46,10 @@ def main():
     # Crear instancias de UITextEntryLine solo una vez para la pantalla de inicio de sesion
     text_inputs_login = {
 
-        "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 250, 350, 42),
+        "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 150, 350, 42),
                                                       manager=manager,
                                                       object_id=ObjectID(class_id='@campoTXT', object_id="input3")),
-        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42),
+        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(920, 200, 350, 42),
                                                           manager=manager,
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4"))
     }
@@ -63,7 +65,7 @@ def main():
         "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 250, 350, 42),
                                                       manager=manager,
                                                       object_id=ObjectID(class_id='@campoTXT', object_id="input3")),
-        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42),
+        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(930, 300, 350, 42),
                                                           manager=manager,
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4")),
         "confirmar_contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(1100, 350, 350, 42),
@@ -148,7 +150,51 @@ def main():
         dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100,
                       AZUL_CLARO, NEGRO)
 
+    # Nueva función para manejar el inicio de sesión
+    def iniciar_sesion(log):
+        try:
+            correo = log[0]
+            contrasena = log[1]
+            print(log)
+            if Jugador.iniciar_sesion(correo,contrasena,jsonhandler):
+                print("Inicio de sesión exitoso")
+                # Aquí puedes redirigir a otra pantalla o mostrar un mensaje de éxito
+                # Crear un cuadro de diálogo para mostrar el error al usuario
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Exito!",
+                    action_long_desc=str("Usuario ingresado con exito!"),
+                    action_short_name="OK",
+                    blocking=True
+                )
+            else:
+                print("Credenciales incorrectas")
+                # Mostrar un mensaje de error
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Exito!",
+                    action_long_desc=str("Error de credenciales"),
+                    action_short_name="OK",
+                    blocking=True
+                )
+        except ValueError as e:
+            dialogo_exito_abierto = False
+            print("Error al iniciar sesion:", e)
+
+            # Crear un cuadro de diálogo para mostrar el error al usuario
+            pygame_gui.windows.UIConfirmationDialog(
+                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                manager=manager,
+                window_title="Error",
+                action_long_desc=str(e),
+                action_short_name="OK",
+                blocking=True
+            )
+
     def btn_listo():
+        global pantalla_actual
         try:
             # Extraer los valores de cada campo en text_inputs
             text_input = {
@@ -182,7 +228,7 @@ def main():
                 action_short_name="OK",
                 blocking=True
             )
-            btnl = True
+            pantalla_actual = "ingresar"
 
             # Mostrar confirmación al usuario
 
@@ -239,17 +285,20 @@ def main():
                             for text_input in text_inputs.values():
                                 text_input.show()
 
-                        elif ALTO_VENTANA // 2 + 200 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 300:
+                        elif ALTO_VENTANA // 2 + 50 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 150:
                             pantalla_actual = "ingresar"
                             for text_input in text_inputs_login.values():
                                 text_input_login.show()
-
+                        elif ALTO_VENTANA // 2 + 200 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 300:
+                            pygame.quit()
+                            sys.exit()
                 elif pantalla_actual == "registrar":
                     if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
                         if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
                             for campo, text_input in text_inputs.items():
                                 print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
-                                btn_listo()
+                            btn_listo()
+
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
                             cambiar_visibilidad_inputboxes(1)
@@ -261,9 +310,11 @@ def main():
                 elif pantalla_actual == "ingresar":
                     if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
                         if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
+                            log = []
                             for campo, text_input in text_inputs_login.items():
                                 print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
-                                btn_listo()
+                                log.append(text_input.get_text())
+                            iniciar_sesion(log)
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
                             cambiar_visibilidad_inputboxes_login(1)

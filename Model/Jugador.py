@@ -1,7 +1,7 @@
 import string
 import random
 from datetime import datetime
-from  Model.JsonHandler import JsonHandler
+from Model.JsonHandler import JsonHandler
 import re
 
 
@@ -25,7 +25,6 @@ class Jugador:
         self.registrar_jugador()
 
     def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario):
-
         if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario]):
             raise ValueError("Complete todos los campos.")
 
@@ -62,11 +61,14 @@ class Jugador:
         except ValueError as e:
             raise e
 
-    def iniciar_sesion(self, correo, contrasena):
-        jugadores = self.jsonhandler.cargar_info()
+    # Función independiente para manejar el inicio de sesión
+    def iniciar_sesion(correo, contrasena, jsonhandler):
+        # Cargar la información de los jugadores desde el JSON
+        jugadores = jsonhandler.cargar_info()
 
+        # Iterar sobre los jugadores y verificar las credenciales
         for jugador in jugadores:
             if jugador['correo'] == correo and jugador['contrasena'] == contrasena:
-                return jugador
+                return True  # Credenciales correctas
 
-        raise ValueError("Credenciales incorrectas.")
+        return False  # Si no se encontró ninguna coincidencia
