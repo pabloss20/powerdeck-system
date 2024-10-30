@@ -8,7 +8,7 @@ import pygame_gui
 from pygame_gui.core import ObjectID
 from Model.Carta import Carta, Atributos, Raza, Tipo_de_Carta, es_variante
 from datetime import datetime
-
+import AdministradorGUI
 
 def iniciar_crear_carta():
     # Inicializar Pygame
@@ -591,7 +591,7 @@ def iniciar_crear_carta():
                     else:
                         pantalla += 1
                 elif evento.ui_element == boton_menu:
-                    main.main()
+                    AdministradorGUI.main()
 
                 elif evento.ui_element == boton_atras:
                     pantalla -= 1
