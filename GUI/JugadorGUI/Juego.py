@@ -84,8 +84,8 @@ def main():
     for text_input in text_inputs.values():
         text_input.hide()
 
-    for text_inputs_login in text_inputs_login.values():
-        text_inputs_login.hide()
+    for text_input_login in text_inputs_login.values():
+        text_input_login.hide()
 
     # Función para dibujar un botón
     def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo):
@@ -122,15 +122,11 @@ def main():
 
     # Función para activar o desactivar los inputboxes según la pantalla
     def cambiar_visibilidad_inputboxes_login(pantalla):
-        for inputbox in text_inputs_login:
+        for input_login in text_inputs_login.values():
             if pantalla == 0:
-                # Variables para mostrar/ocultar campos de texto
-                for text_input in text_inputs_login.values():
-                    text_inputs_login.show()
+                input_login.show()
             else:
-                # Variables para mostrar/ocultar campos de texto
-                for text_input in text_inputs_login.values():
-                    text_inputs_login.hide()
+                input_login.hide()
 
     def pantalla_registrar():
         ventana.fill(NEGRO)
@@ -244,8 +240,9 @@ def main():
                                 text_input.show()
 
                         elif ALTO_VENTANA // 2 + 200 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 300:
-                            pygame.quit()
-                            sys.exit()
+                            pantalla_actual = "ingresar"
+                            for text_input in text_inputs_login.values():
+                                text_input_login.show()
 
                 elif pantalla_actual == "registrar":
                     if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
