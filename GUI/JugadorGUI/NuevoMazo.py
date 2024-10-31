@@ -28,16 +28,22 @@ nombre_del_mazo = ""
 cartas_del_mazo = []
 id_cartas_del_mazo = []
 
-# Función para cargar cartas desde el JSON
+# Función para cargar cartas desde el JSON de jugadores
 def cargar_cartas():
     try:
-        with open("../../Files/cartas.json", "r") as file:
-            cartas_data = json.load(file)
+        with open("../../Files/jugadores.json", "r") as file:
+            jugadores_data = json.load(file)
+
+        # Extrae las cartas de cada jugador
+        cartas_data = []
+        for jugador in jugadores_data:
+            if "cartas" in jugador:
+                cartas_data.extend(jugador["cartas"])  # Agrega todas las cartas del jugador a la lista
+
         return cartas_data
     except FileNotFoundError:
-        print("El archivo 'cartas.json' no se encontró.")
+        print("El archivo 'jugadores.json' no se encontró.")
         return []
-
 def nuevo_mazo():
     global nombre_del_mazo, cartas_del_mazo, id_cartas_del_mazo,dialogo_exito_abierto
     cartas = cargar_cartas()

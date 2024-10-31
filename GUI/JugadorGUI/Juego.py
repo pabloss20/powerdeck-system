@@ -4,12 +4,15 @@ import sys
 from pygame_gui.core import ObjectID
 from Model.Jugador import Jugador
 from Model.JsonHandler import JsonHandler
+import CrearMazo
 
 def main():
     pygame.init()
     jsonhandler = JsonHandler('../../Files/jugadores.json')
 
     # Colores
+    global Ingreso
+    Ingreso = False
     NEGRO = (0, 0, 0)
     BLANCO = (255, 255, 255)
     AZUL_CLARO = (100, 149, 237)
@@ -152,6 +155,7 @@ def main():
 
     # Nueva función para manejar el inicio de sesión
     def iniciar_sesion(log):
+        global Ingreso
         try:
             correo = log[0]
             contrasena = log[1]
@@ -168,6 +172,7 @@ def main():
                     action_short_name="OK",
                     blocking=True
                 )
+                Ingreso = True
             else:
                 print("Credenciales incorrectas")
                 # Mostrar un mensaje de error
@@ -314,6 +319,9 @@ def main():
                                 print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
                                 log.append(text_input.get_text())
                             iniciar_sesion(log)
+                            if Ingreso:
+                                CrearMazo.iniciar_crear_mazo()
+
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
                             cambiar_visibilidad_inputboxes_login(1)
