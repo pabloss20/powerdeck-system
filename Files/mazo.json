@@ -118,5 +118,29 @@
         ],
         "max_cartas": 15,
         "keyid": "D-bj0Tfj3WbzmJ"
+    },
+    {
+        "nombre": "Ptottdd",
+        "fecha_creacion": "2024-10-30T17:58:25.706660",
+        "fecha_modificacion": "2024-10-30T17:58:25.706660",
+        "cartas": [
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RfFckwkzO8KH",
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPedqYUj-V-1oPAawPAlrzL",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaaYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL",
+            "C-qCICaPYhqYUj-V-1oPAawPAlrzL",
+            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
+            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnpZqtsND-V-RxFckwkzO8KH",
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqmUj-V-1oPAawPAlrzL"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-jT9ojhZbbdMl"
     }
 ]

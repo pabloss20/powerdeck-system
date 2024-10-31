@@ -37,6 +37,11 @@ class Jugador:
 
         if not (6 <= len(contrasena) <= 16):
             raise ValueError("La contraseña debe tener entre 6 y 16 caracteres.")
+        try:
+            if not isinstance(int(edad), int):
+                raise ValueError("La edad debe de ser un numero entero")
+        except ValueError as e:
+            raise ValueError("La edad debe de ser un numero entero")
 
     def generar_id(self):
         id_jugador_u = ''.join(random.choices(string.ascii_letters + string.digits, k=12))

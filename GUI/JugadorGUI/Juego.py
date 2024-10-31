@@ -228,7 +228,6 @@ def main():
                 action_short_name="OK",
                 blocking=True
             )
-            pantalla_actual = "ingresar"
 
             # Mostrar confirmación al usuario
 
