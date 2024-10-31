@@ -10,7 +10,7 @@ class JsonHandler:
 
     def guardar_info(self, info):
         with open(self.archivo, 'w') as file:
-            json.dump(info, file)
+            json.dump(info, file, indent=4)
 
     def cargar_info(self):
         if not os.path.exists(self.archivo) or os.path.getsize(self.archivo) == 0:

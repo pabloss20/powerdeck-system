@@ -4,6 +4,14 @@ from datetime import datetime
 from Model.JsonHandler import JsonHandler
 import re
 
+# Probabilidades de cada tipo de carta
+PROBABILIDADES = {
+    "Ultrarara": 0.05,
+    "Muy rara": 0.12,
+    "Rara": 0.18,
+    "Normal": 0.25,
+    "Basica": 0.40
+}
 
 class Jugador:
     def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, imagen_perfil, pais, nombre_usuario):
@@ -19,6 +27,7 @@ class Jugador:
         self.pais = pais
         self.nombre_usuario = nombre_usuario
         self.id = self.generar_id()
+        self.cartas = self.seleccionar_cartas()
 
         # Inicializar JsonHandler aquí
         self.jsonhandler = JsonHandler('../../Files/jugadores.json')
@@ -59,14 +68,45 @@ class Jugador:
             "edad": self.edad,
             "fecha_registro": self.fecha_registro,
             "imagen_perfil": self.imagen_perfil,
-            "pais": self.pais
+            "pais": self.pais,
+            "cartas": self.cartas  # Agregamos el nuevo atributo de cartas al JSON
         }
         try:
             self.jsonhandler.agregar_info(info_jugador)
         except ValueError as e:
             raise e
 
+    # Método para seleccionar cartas basado en las probabilidades definidas
+    def seleccionar_cartas(self, cantidad = 15, archivo_json='../../Files/cartas.json'):
+        # Cargar las cartas desde el archivo JSON
+        json_handler = JsonHandler(archivo_json)
+        cartas = json_handler.cargar_info()
+
+        seleccionadas = []
+        cartas_disponibles = cartas.copy()  # Se copian las cartas para evitar repeticiones
+
+        while len(seleccionadas) < cantidad and cartas_disponibles:
+            carta = random.choices(
+                cartas_disponibles,
+                weights=[PROBABILIDADES.get(carta["tipo_carta"], 0) for carta in cartas_disponibles],
+                k=1
+            )[0]
+
+            seleccionadas.append(carta)
+            cartas_disponibles.remove(carta)  # Eliminar la carta seleccionada para evitar repeticiones
+
+        return seleccionadas
+
+    # Método para mostrar el resultado de las cartas seleccionadas
+    def mostrar_cartas_seleccionadas(self):
+        print("Cartas seleccionadas y sus rarezas con probabilidades:")
+        for carta in self.cartas:
+            rareza = carta['tipo_carta']
+            probabilidad = PROBABILIDADES.get(rareza, 0) * 100
+            print(f"{carta['nombre_personaje']} - Rareza: {rareza} - Probabilidad: {probabilidad:.2f}%")
+
     # Función independiente para manejar el inicio de sesión
+    @staticmethod
     def iniciar_sesion(correo, contrasena, jsonhandler):
         # Cargar la información de los jugadores desde el JSON
         jugadores = jsonhandler.cargar_info()
