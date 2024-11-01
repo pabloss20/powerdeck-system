@@ -77,7 +77,7 @@ class Jugador:
             raise e
 
     # Método para seleccionar cartas basado en las probabilidades definidas
-    def seleccionar_cartas(self, cantidad = 15, archivo_json='../../Files/cartas.json'):
+    def seleccionar_cartas(self, cantidad = 3, archivo_json='../../Files/cartas.json'):
         # Cargar las cartas desde el archivo JSON
         json_handler = JsonHandler(archivo_json)
         cartas = json_handler.cargar_info()

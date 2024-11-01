@@ -44,7 +44,7 @@ def cargar_cartas():
     except FileNotFoundError:
         print("El archivo 'jugadores.json' no se encontró.")
         return []
-def nuevo_mazo():
+def nuevo_mazo(event):
     global nombre_del_mazo, cartas_del_mazo, id_cartas_del_mazo,dialogo_exito_abierto
     cartas = cargar_cartas()
 

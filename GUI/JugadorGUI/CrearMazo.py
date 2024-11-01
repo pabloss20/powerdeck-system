@@ -147,7 +147,7 @@ def iniciar_crear_mazo():
                     if event.ui_element == boton_atras:
                         is_running = False  # Cierra la ventana
                     elif event.ui_element == boton_nuevo_mazo:
-                        NuevoMazo.nuevo_mazo()
+                        NuevoMazo.nuevo_mazo(event)
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # 1 es el botón izquierdo del ratón
                 mouse_pos = pygame.mouse.get_pos()
                 for carta_imagen, llave in cartas_ui.items():

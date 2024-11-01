@@ -53,7 +53,7 @@ def cargar_cartas():
     global cartas, cartas_originales
     cartas = []  # Reiniciar la lista de cartas
     cartas_originales = []  # Reiniciar la lista de cartas originales
-    with open('cartas.json', 'r') as archivo:
+    with open('../../Files/cartas.json', 'r') as archivo:
         datos = json.load(archivo)
         for carta in datos:
             # Cargar la imagen de la carta y el nombre del personaje

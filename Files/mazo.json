@@ -46,5 +46,51 @@
         ],
         "max_cartas": 15,
         "keyid": "D-FOZa79VkI0IB"
+    },
+    {
+        "nombre": "23454",
+        "fecha_creacion": "2024-10-31T18:54:45.688449",
+        "fecha_modificacion": "2024-10-31T18:54:45.688449",
+        "cartas": [
+            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
+            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
+            "C-qCICaPYdqYUj-V-1oPAawlAlrzL",
+            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAawPAirzL",
+            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
+            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAawPAlrzL",
+            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RxFgkwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RfFckwkzO8KH",
+            "C-0fJCnpZ9tsND-V-RxFckwkzOpKH",
+            "C-0fJCnpZ9tsND-V-RxFckwkkk8KH"
+        ],
+        "max_cartas": 15,
+        "keyid": "D-WeoTyUnutRtc"
+    },
+    {
+        "nombre": "Sprint2",
+        "fecha_creacion": "2024-10-31T20:27:37.273774",
+        "fecha_modificacion": "2024-10-31T20:27:37.273774",
+        "cartas": [
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-Ti2311rRKjtY"
+    },
+    {
+        "nombre": "Repetido",
+        "fecha_creacion": "2024-10-31T20:29:14.969247",
+        "fecha_modificacion": "2024-10-31T20:29:14.969247",
+        "cartas": [
+            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
+            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-Dbxfmpq8UsuZ"
     }
 ]

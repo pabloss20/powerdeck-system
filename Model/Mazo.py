@@ -6,7 +6,7 @@ import os
 from collections import Counter
 
 class Mazo:
-    def __init__(self, nombre, max_cartas=15, filepath="../../Files/mazo.json", fileCartas="../../Files/cartas.json"):
+    def __init__(self, nombre, max_cartas=2, filepath="../../Files/mazo.json", fileCartas="../../Files/cartas.json"):
         # Validación de longitud del nombre
         if not (5 <= len(nombre) <= 30):
             raise ValueError("El nombre del mazo debe tener entre 5 y 30 caracteres.")
