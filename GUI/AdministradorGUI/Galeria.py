@@ -1,210 +1,165 @@
 import pygame
-import pygame.freetype
+import pygame_gui
 import json
+import pygame_gui.elements
 import os
 
-# Inicializar Pygame
+# Inicializar Pygame y Pygame GUI
 pygame.init()
+window_size = (1820, 900)
+pygame.display.set_caption('PowerDeck')
+window_surface = pygame.display.set_mode(window_size)
+background = pygame.Surface(window_size)
+background.fill(pygame.Color('#ffffff'))
 
-# Dimensiones de la ventana
-ANCHO_VENTANA = 1400
-ALTO_VENTANA = 800
-FONDO_COLOR = (200, 200, 200)  # Fondo gris claro
-RADIO_ESQUINA = 20  # Radio para las esquinas redondeadas
+# Configuración de la interfaz de usuario de pygame_gui
+manager = pygame_gui.UIManager(window_size)
 
-# Crear ventana
-ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA), pygame.RESIZABLE)
-pygame.display.set_caption("Power Deck - Galería de Cartas")
-
-# Cargar la imagen del título y reducir su tamaño en un 25%
-titulo_imagen = pygame.image.load("../../imgs/titulo_crearcarta.png").convert_alpha()
-titulo_imagen = pygame.transform.scale(titulo_imagen, (300, 150))  # Tamaño reducido
-
-# Cargar la imagen de la lupa y reducir su tamaño en un 90%
-lupa_imagen = pygame.image.load("../../imgs/lupa.png").convert_alpha()
-nuevo_ancho_lupa = int(lupa_imagen.get_width() * 0.03)
-nuevo_alto_lupa = int(lupa_imagen.get_height() * 0.03)
-lupa_imagen = pygame.transform.scale(lupa_imagen, (nuevo_ancho_lupa, nuevo_alto_lupa))
-
-# Crear fuente
-fuente = pygame.freetype.SysFont("Comic Sans MS", 24)
-fuente_nombre = pygame.freetype.SysFont("Comic Sans MS", 18)
-fuente_pequena = pygame.freetype.SysFont("Comic Sans MS", 16)
-
-# Elementos de la interfaz
-barra_busqueda = pygame.Rect(100, 220, 400, 40)
-filtros_menu = pygame.Rect(570, 220, 150, 40)
-boton_refrescar = pygame.Rect(780, 220, 150, 40)
-boton_regresar = pygame.Rect(990, 220, 330, 40)
-
-# Cuadrado blanco en el centro
-cuadrado_blanco = pygame.Rect((ANCHO_VENTANA - 1300) // 2, 195, 1300, 550)
-
-# Variables de estado
-texto_busqueda = ""
-mostrar_filtros = False
-cartas = []  # Lista para almacenar las imágenes de las cartas y sus nombres
-cartas_originales = []  # Lista para almacenar el orden original de las cartas
-filtro_seleccionado = "Filtros"
+# Definir la ruta base para la carpeta de imágenes
+BASE_DIR = "..\.."
 
 
-# Función para cargar las cartas desde el archivo JSON
+# Función para cargar cartas desde el JSON
 def cargar_cartas():
-    global cartas, cartas_originales
-    cartas = []  # Reiniciar la lista de cartas
-    cartas_originales = []  # Reiniciar la lista de cartas originales
-    with open('../../Files/cartas.json', 'r') as archivo:
-        datos = json.load(archivo)
-        for carta in datos:
-            # Cargar la imagen de la carta y el nombre del personaje
-            ruta_imagen = carta["imagen"]
-            nombre_personaje = carta.get("nombre_personaje", "Sin Nombre")
-            if os.path.exists(ruta_imagen):  # Verificar si la imagen existe
-                imagen_carta = pygame.image.load(ruta_imagen).convert_alpha()
-                imagen_carta = pygame.transform.scale(imagen_carta, (120, 170))  # Redimensionar la imagen si es necesario
-                cartas.append((imagen_carta, nombre_personaje))
-                cartas_originales.append((imagen_carta, nombre_personaje))  # Guardar el orden original
+    try:
+        with open("../../Files/cartas.json", "r") as file:
+            cartas_data = json.load(file)
+        return sorted(cartas_data, key=lambda c: (c["nombre_personaje"], c.get("nombre_variante", "")))
+    except FileNotFoundError:
+        print("Error: El archivo 'cartas.json' no se encontró.")
+        return []
+    except json.JSONDecodeError:
+        print("Error al cargar las cartas. Intente más tarde.")
+        return []
 
-# Función para dibujar las cartas en la ventana
-def dibujar_cartas():
-    x_offset = 50  # Espacio horizontal entre cartas
-    y_offset = 50  # Espacio vertical entre cartas
-    cartas_por_fila = 5  # Cambiar a 4 cartas por fila después de la cuarta
-    for i, (imagen_carta, nombre_personaje) in enumerate(cartas):
-        fila = i // cartas_por_fila
-        columna = i % cartas_por_fila
-        x_pos = 150 + columna * (200 + x_offset)
-        y_pos = 300 + fila * (200 + y_offset)
-        ventana.blit(imagen_carta, (x_pos, y_pos))
-        # Dibujar el nombre del personaje sobre la carta
-        nombre_rect = pygame.Rect(x_pos, y_pos - 25, 120, 25)
-        centrar_texto(ventana, nombre_personaje, nombre_rect, font_color=(0, 0, 0))
 
-# Función para dibujar rectángulos con esquinas redondeadas
-def rect_redondeado(surface, color, rect, radio):
-    pygame.draw.rect(surface, (0, 0, 0), rect.inflate(6, 6), border_radius=radio)  # Borde negro
-    pygame.draw.rect(surface, color, rect, border_radius=radio)  # Relleno blanco
+# Función para filtrar cartas
+def filtrar_cartas(cartas, mostrar_principales):
+    alb = []
+    if mostrar_principales:
+        for carta in cartas:
+            if not carta.get("es_variante"):
+                alb.append(carta)
+    else:
+        alb = cartas
+    return alb
 
-# Función para dibujar rectángulos sin esquinas redondeadas
-def rect_sin_redondear(surface, color_fondo, rect):
-    pygame.draw.rect(surface, (0, 0, 0), rect, 0)  # Borde negro
-    pygame.draw.rect(surface, color_fondo, rect.inflate(-6, -6))  # Relleno blanco
 
-# Función para centrar el texto en un rectángulo
-def centrar_texto(surface, text, rect, font_color=(0, 0, 0)):
-    text_surface, text_rect = fuente.render(text, font_color)
-    text_rect.center = rect.center
-    surface.blit(text_surface, text_rect)
+    print(cartas)
+    return cartas
 
-# Función para centrar el texto en un rectángulo con fuente pequeña
-def centrar_texto_pequeno(surface, text, rect, font_color=(0, 0, 0)):
-    text_surface, text_rect = fuente_pequena.render(text, font_color)
-    text_rect.center = rect.center
-    surface.blit(text_surface, text_rect)
 
-# Función para colocar texto dentro del rectángulo sin desbordar
-def texto_derecha(surface, text, rect, offset=10, font_color=(0, 0, 0)):
-    text_surface, text_rect = fuente.render(text, font_color)
-    text_rect.midleft = (rect.x + offset, rect.centery)
-    surface.blit(text_surface, text_rect)
+def iniciar_galeria():
+    # Tamaños y posiciones adaptativas
+    boton_ancho, boton_alto = 140, 50
+    panel_derecha_x = window_size[0] * 0.8
+    panel_derecha_ancho = window_size[0] * 0.18
+    panel_derecha_alto = window_size[1] * 0.7
 
-# Función para ordenar las cartas alfabéticamente por nombre de personaje
-def ordenar_cartas_alfabeticamente():
-    global cartas
-    cartas.sort(key=lambda carta: carta[1])
+    # Cargar cartas
+    cartas = cargar_cartas()
+    con_filtro = True
+    if not cartas:
+        print("No existen cartas creadas en el juego.")
+        return
 
-# Función para eliminar filtros y restaurar el orden original
-def eliminar_filtro():
-    global cartas, filtro_seleccionado
-    cartas = cartas_originales.copy()  # Restaurar cartas originales
-    filtro_seleccionado = "Filtros"  # Cambiar texto del filtro a por defecto
+    # Configuración de fuente
+    font = pygame.font.SysFont("Arial", 24)
+    titulo_texto = font.render("Galería POWER DECK", True, pygame.Color('#000000'))
+    titulo_pos = (window_size[0] * 0.4, 20)
 
-# Cargar las cartas al iniciar
-cargar_cartas()
+    # Botón "Atrás" y "Filtro"
+    boton_atras = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((panel_derecha_x + 20, window_size[1] - 80), (boton_ancho, boton_alto)),
+        text='Atrás',
+        manager=manager
+    )
+    boton_filtro = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((panel_derecha_x + 200, window_size[1] - 80), (boton_ancho, boton_alto)),
+        text='Filtrar Variantes',
+        manager=manager
+    )
 
-# Bucle principal
-corriendo = True
-while corriendo:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            corriendo = False
+    # Contenedor de cartas
+    contenedor_cartas = pygame_gui.elements.UIScrollingContainer(
+        relative_rect=pygame.Rect((100, 100), (1600, 700)),
+        manager=manager
+    )
 
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_RETURN:
-                print("Texto de búsqueda:", texto_busqueda)
+    def actualizar_contenido():
 
-        if evento.type == pygame.MOUSEBUTTONDOWN:
-            if filtros_menu.collidepoint(evento.pos):
-                mostrar_filtros = not mostrar_filtros
-            if boton_refrescar.collidepoint(evento.pos):
-                print("Botón refrescar presionado")
-                cargar_cartas()  # Cargar cartas al presionar refrescar
-                if filtro_seleccionado == "Alfabético":
-                    ordenar_cartas_alfabeticamente()
-                elif filtro_seleccionado == "Filtros":
-                    eliminar_filtro()  # Restaurar el orden original
+        # Eliminar contenido existente
+        for element in contenedor_cartas.get_container().elements:
+            element.hide()
 
-            if boton_regresar.collidepoint(evento.pos):
-                print("Botón regresar presionado")
-            if mostrar_filtros:
-                opcion_filtros_rect = pygame.Rect(filtros_menu.x, filtros_menu.y + 40, filtros_menu.width, 40)
-                if opcion_filtros_rect.collidepoint(evento.pos):
-                    filtro_seleccionado = "Alfabético"
-                    mostrar_filtros = False
-                    print("Filtro seleccionado: Alfabético")
-                    ordenar_cartas_alfabeticamente()
-                elif filtros_menu.y + 80 < evento.pos[1] < filtros_menu.y + 120:  # Opción de eliminar filtros
-                    eliminar_filtro()
-                    mostrar_filtros = False
-                    print("Filtro eliminado, se ha restaurado el orden original")
+        # Aplicar filtro
+        cartas_mostradas = filtrar_cartas(cartas, mostrar_principales=con_filtro)
+        start_x, start_y = 10, 10
+        espacio_x, espacio_y = 200, 300
+        columnas = 7
 
-        if evento.type == pygame.TEXTINPUT:
-            texto_busqueda += evento.text
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_BACKSPACE:
-                texto_busqueda = texto_busqueda[:-1]
+        for i, carta in enumerate(cartas_mostradas):
+            pos_x = start_x + (i % columnas) * espacio_x
+            pos_y = start_y + (i // columnas) * espacio_y
 
-    # Dibujar el fondo
-    ventana.fill(FONDO_COLOR)
+            # Cargar imagen o marcador de posición
+            imagen_rel_path = carta.get("imagen")
+            imagen_path = os.path.join(BASE_DIR, imagen_rel_path)
+            if imagen_rel_path and os.path.exists(imagen_path):
+                imagen = pygame.image.load(imagen_path)
+                imagen = pygame.transform.scale(imagen, (100, 150))
+            else:
+                imagen = pygame.Surface((100, 150))
+                imagen.fill((200, 200, 200))
 
-    # Dibujar el cuadrado blanco en el centro sin esquinas redondeadas
-    rect_sin_redondear(ventana, (255, 255, 255), cuadrado_blanco)
+            carta_imagen = pygame_gui.elements.UIImage(
+                relative_rect=pygame.Rect((pos_x, pos_y), (100, 150)),
+                image_surface=imagen,
+                manager=manager,
+                container=contenedor_cartas.get_container()
+            )
 
-    # Dibujar título
-    ventana.blit(titulo_imagen, (ANCHO_VENTANA // 2 - titulo_imagen.get_width() // 2, 20))
+            # Mostrar los atributos de la carta
+            info_text = f"{carta['nombre_personaje']}\n{carta.get('nombre_variante', '')}\n{carta['raza']}\n{carta['tipo_carta']}\n" \
+                        f"Activa en Juego: {'Sí' if carta.get('activa_en_juego', False) else 'No'}\n" \
+                        f"Activa en Sobres: {'Sí' if carta.get('activa_en_sobres', False) else 'No'}\n" \
+                        f"Llave unica: {carta['llave']}\n" \
+                        f"Fecha Modificación: {carta['fecha_modificacion']}"
 
-    # Dibujar barra de búsqueda con esquinas redondeadas
-    rect_redondeado(ventana, (255, 255, 255), barra_busqueda, RADIO_ESQUINA)
-    centrar_texto(ventana, texto_busqueda, barra_busqueda)
-    ventana.blit(lupa_imagen, (barra_busqueda.x + barra_busqueda.width - 390, barra_busqueda.y + 5))
+            pygame_gui.elements.UITextBox(
+                relative_rect=pygame.Rect((pos_x, pos_y + 160), (180, 120)),
+                html_text=info_text,
+                manager=manager,
+                container=contenedor_cartas.get_container()
+            )
 
-    dibujar_cartas()
+    actualizar_contenido()
 
-    # Dibujar menú de filtros sin esquinas redondeadas
-    rect_sin_redondear(ventana, (255, 255, 255), filtros_menu)
-    centrar_texto(ventana, filtro_seleccionado, filtros_menu)
+    clock = pygame.time.Clock()
+    is_running = True
+    while is_running:
+        time_delta = clock.tick(60) / 1000.0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                is_running = False
+            manager.process_events(event)
 
-    # Si se están mostrando los filtros, dibujar la opción de "Alfabético" y "Eliminar Filtros"
-    if mostrar_filtros:
-        # Opción "Alfabético"
-        opcion_filtros_rect = pygame.Rect(filtros_menu.x, filtros_menu.y + 40, filtros_menu.width, 40)
-        rect_sin_redondear(ventana, (255, 255, 255), opcion_filtros_rect)
-        centrar_texto(ventana, "Alfabético", opcion_filtros_rect)
+            if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == boton_atras:
+                        is_running = False
+                    if event.ui_element == boton_filtro:
+                        con_filtro = not con_filtro
+                        actualizar_contenido()
 
-        # Opción "Eliminar Filtros"
-        opcion_eliminar_filtros_rect = pygame.Rect(filtros_menu.x, filtros_menu.y + 80, filtros_menu.width, 40)
-        rect_sin_redondear(ventana, (255, 255, 255), opcion_eliminar_filtros_rect)
-        centrar_texto_pequeno(ventana, "Eliminar Filtros", opcion_eliminar_filtros_rect)
+        window_surface.blit(background, (0, 0))
+        window_surface.blit(titulo_texto, titulo_pos)
+        manager.update(time_delta)
+        manager.draw_ui(window_surface)
+        pygame.display.update()
 
-    # Dibujar botones con esquinas redondeadas
-    rect_redondeado(ventana, (255, 255, 255), boton_refrescar, RADIO_ESQUINA)
-    centrar_texto(ventana, "Refrescar", boton_refrescar)
+    pygame.quit()
 
-    rect_redondeado(ventana, (255, 255, 255), boton_regresar, RADIO_ESQUINA)
-    centrar_texto(ventana, "Regresar al menú principal", boton_regresar)
 
-    # Actualizar pantalla
-    pygame.display.flip()
-
-# Salir de Pygame
-pygame.quit()
+if __name__ == "__main__":
+    iniciar_galeria()
