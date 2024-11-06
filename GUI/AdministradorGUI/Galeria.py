@@ -15,8 +15,6 @@ background.fill(pygame.Color('#ffffff'))
 # Configuración de la interfaz de usuario de pygame_gui
 manager = pygame_gui.UIManager(window_size)
 
-# Definir la ruta base para la carpeta de imágenes
-BASE_DIR = "..\.."
 
 
 # Función para cargar cartas desde el JSON
@@ -57,11 +55,20 @@ def iniciar_galeria():
     panel_derecha_alto = window_size[1] * 0.7
 
     # Cargar cartas
-    cartas = cargar_cartas()
-    con_filtro = True
+    try:
+        cartas = cargar_cartas()
+    except ValueError as e:
+        cartas = []
+    con_filtro = False
     if not cartas:
-        print("No existen cartas creadas en el juego.")
-        return
+        pygame_gui.windows.UIConfirmationDialog(
+            rect=pygame.Rect((window_size[0] // 2 - 150, window_size[1] // 2 - 50), (300, 100)),
+            manager=manager,
+            window_title="Error",
+            action_long_desc=str("No existe ninguna carta creada en el juego"),
+            action_short_name="OK",
+            blocking=True
+        )
 
     # Configuración de fuente
     font = pygame.font.SysFont("Arial", 24)
@@ -104,7 +111,7 @@ def iniciar_galeria():
 
             # Cargar imagen o marcador de posición
             imagen_rel_path = carta.get("imagen")
-            imagen_path = os.path.join(BASE_DIR, imagen_rel_path)
+            imagen_path = os.path.join(imagen_rel_path)
             if imagen_rel_path and os.path.exists(imagen_path):
                 imagen = pygame.image.load(imagen_path)
                 imagen = pygame.transform.scale(imagen, (100, 150))
