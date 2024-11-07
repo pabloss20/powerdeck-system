@@ -1,0 +1,11 @@
+[
+    {
+        "id": "U-2C5FfqT4H9rY-R-lGN2KaY39xi9",
+        "nombre": "Juan",
+        "apellido": "Perez",
+        "correo": "juan.perez@ejemplo.com",
+        "contrasena": "JDJiJDEyJDZQUW1EaFphUmVTNVlnWVhnaHZveGVrLmNtLkNDVDZGbngzaWl0dEhoeDBJVk1RS0FMbU5H",
+        "tipo_usuario": "administrador",
+        "rol_administrador": "juego"
+    }
+]
