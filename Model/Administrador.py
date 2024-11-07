@@ -16,7 +16,7 @@ class Administrador(Usuario):
         self.rol_administrador = rol_administrador
         self.id = generar_llave("U", "R")
 
-        self.jsonhandler = JsonHandler('../Files/usuarios.json')
+        self.jsonhandler = JsonHandler('../../Files/usuarios.json')
         self.registrar_usuario()
 
     def validar_datos(self, nombre, apellido, correo, contrasena):
@@ -39,6 +39,8 @@ class Administrador(Usuario):
     def registrar_usuario(self):
 
         contrasena_encriptada = encriptar(self.contrasena)
+
+        # Se convierte bytes a base64
         contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
 
         info_administrador = {

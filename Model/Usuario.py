@@ -1,4 +1,4 @@
-from Model.GestorHash import verificar  # Importa la función de verificación
+from Model.GestorHash import verificar
 from Model.JsonHandler import JsonHandler
 import base64
 
@@ -21,26 +21,36 @@ class Usuario:
 
     @staticmethod
     def iniciar_sesion(correo, contrasena):
-        # Cargar el archivo de usuarios
-        jsonhandler = JsonHandler('../Files/usuarios.json')
+        if not all([correo, contrasena]):
+            raise ValueError("Complete todos los campos.")
+
+        # Se carga el archivo de usuarios
+        jsonhandler = JsonHandler('../../Files/usuarios.json')
         usuarios = jsonhandler.cargar_info()
 
-        # Buscar al usuario por correo
-        usuario = next((u for u in usuarios if u['correo'] == correo), None)
+        # Se busca al usuario por correo en administradores y jugadores
+        usuario = next((u for u in usuarios["administradores"] if u['correo'] == correo), None)
+
+        if not usuario:
+            usuario = next((u for u in usuarios["jugadores"] if u['correo'] == correo), None)
+
         if not usuario:
             return "Usuario no encontrado"
 
-        # Decodificar el hash de la contraseña desde base64
-        contrasena_hash_base64 = usuario['contrasena']
-        contrasena_hash = base64.b64decode(contrasena_hash_base64.encode('utf-8'))
+        # Se obtiene el hash de la contraseña en formato base64
+        contrasena_base64 = usuario['contrasena']
 
-        # Verificar la contraseña
-        if verificar(contrasena, contrasena_hash):
+        # Se decodifica el hash de base64 a bytes
+        contrasena_hash = base64.b64decode(contrasena_base64)
+
+        # Se verifica la contraseña
+        if verificar(contrasena, contrasena_hash):  # Contrasena_hash es de tipo bytes
             if usuario['tipo_usuario'] == 'administrador':
                 if usuario['rol_administrador'] == 'juego':
                     return 2
                 elif usuario['rol_administrador'] == 'reportes':
                     return 3
-            return 1
+            return 1  # Jugador
         else:
             return "Contraseña incorrecta"
+

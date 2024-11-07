@@ -1,11 +1,14 @@
-[
-    {
-        "id": "U-2C5FfqT4H9rY-R-lGN2KaY39xi9",
-        "nombre": "Juan",
-        "apellido": "Perez",
-        "correo": "juan.perez@ejemplo.com",
-        "contrasena": "JDJiJDEyJDZQUW1EaFphUmVTNVlnWVhnaHZveGVrLmNtLkNDVDZGbngzaWl0dEhoeDBJVk1RS0FMbU5H",
-        "tipo_usuario": "administrador",
-        "rol_administrador": "juego"
-    }
-]
+{
+    "administradores": [
+        {
+            "id": "U-MUTJeEPQzXFN-R-ahGI9PnBB54i",
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "correo": "juan.perez@ejemplo.com",
+            "contrasena": "JDJiJDEyJGxMN1pCalBJMGU4dkVrR1ZLd0Q1eHV2ZFVXdUZWTHZyWjVZUE0yS2pzWUZzZHV0ZFNRMGZH",
+            "tipo_usuario": "administrador",
+            "rol_administrador": "juego"
+        }
+    ],
+    "jugadores": []
+}
