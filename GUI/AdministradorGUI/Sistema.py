@@ -222,6 +222,5 @@ def main():
         manager.draw_ui(ventana)
         pygame.display.update()
 
-
 if __name__ == "__main__":
     main()
