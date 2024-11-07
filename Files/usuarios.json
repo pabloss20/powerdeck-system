@@ -8,6 +8,15 @@
             "contrasena": "JDJiJDEyJGxMN1pCalBJMGU4dkVrR1ZLd0Q1eHV2ZFVXdUZWTHZyWjVZUE0yS2pzWUZzZHV0ZFNRMGZH",
             "tipo_usuario": "administrador",
             "rol_administrador": "juego"
+        },
+        {
+            "id": "U-SUaJC3cyCNn4-R-JYeBidc7eGc9",
+            "nombre": "Pablo",
+            "apellido": "Sanchez",
+            "correo": "pablo123@gmail.com",
+            "contrasena": "JDJiJDEyJFhjMG5aNC5ueXFMTVVUaGVmeHNHdmV1Z2ZwUG9XQ2IvaGF1bFE0OUhCWlp5T1R0SGJkTXY2",
+            "tipo_usuario": "administrador",
+            "rol_administrador": "juego"
         }
     ],
     "jugadores": []

@@ -101,9 +101,10 @@ def iniciar_reportes_gui():
                 "contrasena": text_inputs["contrasena"].get_text(),
             }
 
-            rol_seleccionado = dropdown_rol.selected_option  # Obtiene el rol seleccionado
-            if rol_seleccionado == "Seleccionar rol":
-                raise ValueError("Debe seleccionar un rol.")
+            rol_seleccionado = dropdown_rol.selected_option[0]  # Solo toma el primer valor de la tupla
+
+            if rol_seleccionado == "":
+                raise ValueError("Debe seleccionar un rol")
 
             nuevo_admin = Administrador(
                 nombre=text_input["nombre"],

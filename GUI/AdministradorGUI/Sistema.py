@@ -6,7 +6,6 @@ from Model.Jugador import Jugador
 from Model.Administrador import Administrador
 from Model.Usuario import Usuario
 import AdminReportesGUI
-import AdministradorGUI
 
 def main():
     pygame.init()
