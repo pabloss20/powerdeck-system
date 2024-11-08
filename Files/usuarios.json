@@ -17,6 +17,15 @@
             "contrasena": "JDJiJDEyJFhjMG5aNC5ueXFMTVVUaGVmeHNHdmV1Z2ZwUG9XQ2IvaGF1bFE0OUhCWlp5T1R0SGJkTXY2",
             "tipo_usuario": "administrador",
             "rol_administrador": "juego"
+        },
+        {
+            "id": "U-Dinis6tw9Z6H-R-ZqEwvuIpyfjN",
+            "nombre": "Joan",
+            "apellido": "Ugalde",
+            "correo": "askjcns@gmail.com",
+            "contrasena": "JDJiJDEyJHYzckdySVltYmVQWGJ4SFNNM2xDQS5PSXdaYXdvbDVkYUdadGdxQ3dib1JhVVdyLzBsYzBl",
+            "tipo_usuario": "administrador",
+            "rol_administrador": "reportes"
         }
     ],
     "jugadores": []
