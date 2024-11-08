@@ -198,7 +198,7 @@ def main():
                 blocking=True
             )
 
-    def btn_listo():
+    def btn_listo(contra,confirmar):
         global pantalla_actual
         try:
             # Extraer los valores de cada campo en text_inputs
@@ -206,8 +206,8 @@ def main():
                 "nombre": text_inputs["nombre"].get_text(),
                 "apellido": text_inputs["apellido"].get_text(),
                 "correo": text_inputs["correo"].get_text(),
-                "contrasena": text_inputs["contrasena"].get_text(),
-                "confirmar_contrasena": text_inputs["confirmar_contrasena"].get_text(),
+                "contrasena": contra,
+                "confirmar_contrasena": confirmar,
                 "edad": text_inputs["edad"].get_text(),
                 "pais": text_inputs["pais"].get_text(),
                 "nombre_usuario": text_inputs["usuario"].get_text()
@@ -269,6 +269,10 @@ def main():
                       300, 100, AZUL_CLARO, NEGRO)
         dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100,
                       AZUL_CLARO, NEGRO)
+
+    # Variable para almacenar el texto real de la contraseña
+    texto_real_contrasena = ""
+    texto_real_confirmar_contrasena = ""
     # Bucle principal
     reloj = pygame.time.Clock()
     while True:
@@ -278,6 +282,41 @@ def main():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            # Detectar eventos de texto en `UITextEntryLine`
+            if evento.type == pygame.USEREVENT and evento.user_type == pygame_gui.UI_TEXT_ENTRY_CHANGED:
+                for key in text_inputs_login:
+                    if evento.ui_element == text_inputs_login[key]:
+                        if key == "contrasena":  # Campo de contraseña
+                            texto_actual = text_inputs_login[key].get_text()
+                            if len(texto_actual) > len(texto_real_contrasena):
+                                texto_real_contrasena += texto_actual[-1]  # Agregar el último carácter ingresado
+                            elif len(texto_actual) < len(texto_real_contrasena):
+                                texto_real_contrasena = texto_real_contrasena[
+                                                        :-1]  # Eliminar el último carácter si se borró
+                for key in text_inputs:
+                    if evento.ui_element == text_inputs[key]:
+                        if key == "confirmar_contrasena":  # Campo de confirmación de contraseña
+                            texto_actual_c = text_inputs[key].get_text()
+                            if len(texto_actual_c) > len(texto_real_confirmar_contrasena):
+                                texto_real_confirmar_contrasena += texto_actual_c[
+                                    -1]  # Agregar el último carácter ingresado
+                            elif len(texto_actual_c) < len(texto_real_confirmar_contrasena):
+                                texto_real_confirmar_contrasena = texto_real_confirmar_contrasena[
+                                                                  :-1]  # Eliminar el último carácter si se borró
+
+                            # Mostrar solo asteriscos en el campo
+                            text_inputs[key].set_text('*' * len(texto_real_confirmar_contrasena))
+
+                        elif key == "contrasena":  # Campo de contraseña
+                            texto_actual = text_inputs[key].get_text()
+                            if len(texto_actual) > len(texto_real_contrasena):
+                                texto_real_contrasena += texto_actual[-1]  # Agregar el último carácter ingresado
+                            elif len(texto_actual) < len(texto_real_contrasena):
+                                texto_real_contrasena = texto_real_contrasena[
+                                                        :-1]  # Eliminar el último carácter si se borró
+
+                            # Mostrar solo asteriscos en el campo
+                            text_inputs[key].set_text('*' * len(texto_real_contrasena))
 
             manager.process_events(evento)
             if evento.type == pygame.MOUSEBUTTONUP:
@@ -301,7 +340,7 @@ def main():
                         if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
                             for campo, text_input in text_inputs.items():
                                 print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
-                            btn_listo()
+                            btn_listo(texto_real_contrasena,texto_real_confirmar_contrasena)
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
@@ -316,8 +355,13 @@ def main():
                         if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
                             log = []
                             for campo, text_input in text_inputs_login.items():
-                                print(f"{campo}: {text_input.get_text()}")  # Aquí puedes guardar los datos.
-                                log.append(text_input.get_text())
+                                if campo == "contrasena":
+                                    # Usar el texto real de la contraseña
+                                    log.append(texto_real_contrasena)
+                                    print(f"{campo}: {texto_real_contrasena}")
+                                else:
+                                    log.append(text_input.get_text())
+                                    print(f"{campo}: {text_input.get_text()}")
                             iniciar_sesion(log)
                             if Ingreso:
                                 CrearMazo.iniciar_crear_mazo()
