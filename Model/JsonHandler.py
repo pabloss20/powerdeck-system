@@ -13,6 +13,16 @@ class JsonHandler:
         with open(self.archivo, 'w') as file:
             json.dump(info, file, indent=4)
 
+    def cargar_cartas(self):
+        if not os.path.exists(self.archivo) or os.path.getsize(self.archivo) == 0:
+            return []
+
+        with open(self.archivo, 'r') as file:
+            try:
+                return json.load(file)
+            except json.JSONDecodeError:
+                return []
+
     def cargar_info(self):
         """Cargar la información del archivo JSON, asegurándose de que sea la estructura correcta."""
         if not os.path.exists(self.archivo) or os.path.getsize(self.archivo) == 0:

@@ -2,7 +2,19 @@ import string
 import random
 from datetime import datetime
 from Model.JsonHandler import JsonHandler
+from Model.GeneradorLlave import generar_llave
+from Model.GestorHash import encriptar
 import re
+from enum import Enum
+
+import base64
+
+from Model.Usuario import Usuario
+
+class EstadoJugador(Enum):
+    INACTIVO = "Inactivo"
+    BUSCANDO_BATALLA = "Buscando Batalla"
+    EN_BATALLA = "En Batalla"
 
 # Probabilidades de cada tipo de carta
 PROBABILIDADES = {
@@ -13,28 +25,28 @@ PROBABILIDADES = {
     "Basica": 0.40
 }
 
-class Jugador:
-    def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, imagen_perfil, pais, nombre_usuario):
-        self.validar_datos(nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario)
+class Jugador(Usuario):
+    def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario):
+        super().__init__(nombre, apellido, correo, contrasena)
+
+        self.validar_datos(nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario)
 
         self.nombre = nombre
         self.apellido = apellido
         self.correo = correo
         self.contrasena = contrasena
-        self.edad = edad
         self.fecha_registro = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
-        self.imagen_perfil = imagen_perfil
-        self.pais = pais
         self.nombre_usuario = nombre_usuario
-        self.id = self.generar_id()
+        self.id = generar_llave("U", "A")
         self.cartas = self.seleccionar_cartas()
+        self.estado = EstadoJugador.INACTIVO
 
         # Inicializar JsonHandler aquí
-        self.jsonhandler = JsonHandler('../../Files/jugadores.json')
-        self.registrar_jugador()
+        self.jsonhandler = JsonHandler('../../Files/usuarios.json')
+        self.registrar_usuario()
 
-    def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario):
-        if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, edad, nombre_usuario]):
+    def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario):
+        if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario]):
             raise ValueError("Complete todos los campos.")
 
         if not (contrasena == confirmar_contrasena):
@@ -46,41 +58,49 @@ class Jugador:
 
         if not (6 <= len(contrasena) <= 16):
             raise ValueError("La contraseña debe tener entre 6 y 16 caracteres.")
-        try:
-            if not isinstance(int(edad), int):
-                raise ValueError("La edad debe de ser un numero entero")
-        except ValueError as e:
-            raise ValueError("La edad debe de ser un numero entero")
 
-    def generar_id(self):
-        id_jugador_u = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
-        id_jugador_a = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
-        return f"U-{id_jugador_u}-A-{id_jugador_a}"
+        if not any(char.isdigit() for char in contrasena):
+            raise ValueError("La contraseña debe incluir al menos un número.")
 
-    def registrar_jugador(self):
+        if not any(char.isalpha() for char in contrasena):
+            raise ValueError("La contraseña debe incluir al menos una letra.")
+
+    def registrar_usuario(self):
+
+        contrasena_encriptada = encriptar(self.contrasena)
+
+        # Se convierte bytes a base64
+        contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
+
         info_jugador = {
             "id": self.id,
             "nombre_usuario": self.nombre_usuario,
             "nombre": self.nombre,
             "apellido": self.apellido,
             "correo": self.correo,
-            "contrasena": self.contrasena,
-            "edad": self.edad,
+            "contrasena": contrasena_base64,
             "fecha_registro": self.fecha_registro,
-            "imagen_perfil": self.imagen_perfil,
-            "pais": self.pais,
-            "cartas": self.cartas  # Agregamos el nuevo atributo de cartas al JSON
+            "cartas": self.cartas,
+            "tipo_usuario": "jugador"
         }
         try:
             self.jsonhandler.agregar_info(info_jugador)
         except ValueError as e:
             raise e
 
+    # Actualiza el estado del jugador durante el juego
+    def actualizar_estado(self, estado: EstadoJugador):
+        if isinstance(estado, EstadoJugador):
+            self.estado = estado
+            print(f"Estado del jugador '{self.nombre}' actualizado a: {self.estado.value}")
+        else:
+            raise ValueError("El nuevo estado debe ser una instancia de EstadoJugador.")
+
     # Método para seleccionar cartas basado en las probabilidades definidas
     def seleccionar_cartas(self, cantidad = 3, archivo_json='../../Files/cartas.json'):
         # Cargar las cartas desde el archivo JSON
         json_handler = JsonHandler(archivo_json)
-        cartas = json_handler.cargar_info()
+        cartas = json_handler.cargar_cartas()
 
         seleccionadas = []
         cartas_disponibles = cartas.copy()  # Se copian las cartas para evitar repeticiones
@@ -104,16 +124,3 @@ class Jugador:
             rareza = carta['tipo_carta']
             probabilidad = PROBABILIDADES.get(rareza, 0) * 100
             print(f"{carta['nombre_personaje']} - Rareza: {rareza} - Probabilidad: {probabilidad:.2f}%")
-
-    # Función independiente para manejar el inicio de sesión
-    @staticmethod
-    def iniciar_sesion(correo, contrasena, jsonhandler):
-        # Cargar la información de los jugadores desde el JSON
-        jugadores = jsonhandler.cargar_info()
-
-        # Iterar sobre los jugadores y verificar las credenciales
-        for jugador in jugadores:
-            if jugador['correo'] == correo and jugador['contrasena'] == contrasena:
-                return True  # Credenciales correctas
-
-        return False  # Si no se encontró ninguna coincidencia
