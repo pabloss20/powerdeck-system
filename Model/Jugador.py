@@ -26,10 +26,10 @@ PROBABILIDADES = {
 }
 
 class Jugador(Usuario):
-    def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario):
+    def __init__(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais):
         super().__init__(nombre, apellido, correo, contrasena)
 
-        self.validar_datos(nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario)
+        self.validar_datos(nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais)
 
         self.nombre = nombre
         self.apellido = apellido
@@ -40,13 +40,14 @@ class Jugador(Usuario):
         self.id = generar_llave("U", "A")
         self.cartas = self.seleccionar_cartas()
         self.estado = EstadoJugador.INACTIVO
+        self.pais = pais
 
         # Inicializar JsonHandler aquí
         self.jsonhandler = JsonHandler('../../Files/usuarios.json')
         self.registrar_usuario()
 
-    def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario):
-        if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario]):
+    def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais):
+        if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais]):
             raise ValueError("Complete todos los campos.")
 
         if not (contrasena == confirmar_contrasena):
@@ -80,6 +81,7 @@ class Jugador(Usuario):
             "correo": self.correo,
             "contrasena": contrasena_base64,
             "fecha_registro": self.fecha_registro,
+            "pais": self.pais,
             "cartas": self.cartas,
             "tipo_usuario": "jugador"
         }
