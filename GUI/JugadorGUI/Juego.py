@@ -327,6 +327,7 @@ def main():
                             elif len(texto_actual) < len(texto_real_contrasena):
                                 texto_real_contrasena = texto_real_contrasena[
                                                         :-1]  # Eliminar el último carácter si se borró
+
                 for key in text_inputs:
                     if evento.ui_element == text_inputs[key]:
                         if key == "confirmar_contrasena":  # Campo de confirmación de contraseña
@@ -417,6 +418,6 @@ def main():
         manager.draw_ui(ventana)
         pygame.display.update()
 
-
 if __name__ == "__main__":
+
     main()
