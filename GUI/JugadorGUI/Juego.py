@@ -5,10 +5,12 @@ from pygame_gui.core import ObjectID
 from Model.Jugador import Jugador
 from Model.JsonHandler import JsonHandler
 import CrearMazo
+from Model import Servidor
+from Model.Usuario import Usuario
 
 def main():
     pygame.init()
-    jsonhandler = JsonHandler('../../Files/jugadores.json')
+    jsonhandler = JsonHandler('../../Files/usuarios.json')
 
     # Colores
     global Ingreso
@@ -36,7 +38,6 @@ def main():
         "correo": "",
         "contrasena": "",
         "confirmar_contrasena": "",
-        "edad": "",
         "usuario": "",
         "pais" : ""
     }
@@ -74,15 +75,12 @@ def main():
         "confirmar_contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(1100, 350, 350, 42),
                                                           manager=manager,
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4")),
-        "edad": pygame_gui.elements.UITextEntryLine(
+        "usuario": pygame_gui.elements.UITextEntryLine(
             relative_rect=pygame.Rect(860, 400, 350, 42), manager=manager,
             object_id=ObjectID(class_id='@campoTXT', object_id="input5")),
-        "usuario": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860,450, 350, 42),
+        "pais": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860,450, 350, 42),
                                                     manager=manager,
-                                                    object_id=ObjectID(class_id='@campoTXT', object_id="input6")),
-        "pais": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 500, 350, 42),
-                                                       manager=manager,
-                                                       object_id=ObjectID(class_id='@campoTXT', object_id="input6"))
+                                                    object_id=ObjectID(class_id='@campoTXT', object_id="input6"))
     }
 
     # Variables para mostrar/ocultar campos de texto
@@ -160,35 +158,61 @@ def main():
             correo = log[0]
             contrasena = log[1]
             print(log)
-            if Jugador.iniciar_sesion(correo,contrasena,jsonhandler):
-                print("Inicio de sesión exitoso")
-                # Aquí puedes redirigir a otra pantalla o mostrar un mensaje de éxito
-                # Crear un cuadro de diálogo para mostrar el error al usuario
-                pygame_gui.windows.UIConfirmationDialog(
-                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
-                    manager=manager,
-                    window_title="Exito!",
-                    action_long_desc=str("Usuario ingresado con exito!"),
-                    action_short_name="OK",
-                    blocking=True
-                )
-                Ingreso = True
-            else:
-                print("Credenciales incorrectas")
-                # Mostrar un mensaje de error
-                pygame_gui.windows.UIConfirmationDialog(
-                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
-                    manager=manager,
-                    window_title="Exito!",
-                    action_long_desc=str("Error de credenciales"),
-                    action_short_name="OK",
-                    blocking=True
-                )
-        except ValueError as e:
-            dialogo_exito_abierto = False
-            print("Error al iniciar sesion:", e)
 
-            # Crear un cuadro de diálogo para mostrar el error al usuario
+            # Llamamos al método iniciar_sesion de Usuario
+            resultado = Usuario.iniciar_sesion(correo, contrasena)
+
+            if resultado == 1:
+                # Usuario autenticado, pero no es administrador
+                print("Inicio de sesión exitoso -Jugador")
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Éxito",
+                    action_long_desc="Bienvenido, Jugador.",
+                    action_short_name="OK",
+                    blocking=True
+                )
+                Ingreso = 1
+
+            elif resultado == 2:
+                print("Usuario autenticado, pero no es jugador.")
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Advertencia",
+                    action_long_desc="Usuario autenticado, pero no es jugador.",
+                    action_short_name="OK",
+                    blocking=True
+                )
+                Ingreso = 2
+
+            elif resultado == 3:
+                print("Usuario autenticado, pero no es jugador.")
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Advertencia",
+                    action_long_desc="Usuario autenticado, pero no es jugador.",
+                    action_short_name="OK",
+                    blocking=True
+                )
+                Ingreso = 3
+
+            else:
+                # Caso en el que el resultado es "Usuario no encontrado" o "Contraseña incorrecta"
+                print("Error de credenciales")
+                pygame_gui.windows.UIConfirmationDialog(
+                    rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                    manager=manager,
+                    window_title="Error",
+                    action_long_desc=str(resultado),
+                    action_short_name="OK",
+                    blocking=True
+                )
+
+        except ValueError as e:
+            print("Error al iniciar sesión:", e)
             pygame_gui.windows.UIConfirmationDialog(
                 rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
                 manager=manager,
@@ -208,7 +232,6 @@ def main():
                 "correo": text_inputs["correo"].get_text(),
                 "contrasena": contra,
                 "confirmar_contrasena": confirmar,
-                "edad": text_inputs["edad"].get_text(),
                 "pais": text_inputs["pais"].get_text(),
                 "nombre_usuario": text_inputs["usuario"].get_text()
             }
@@ -219,8 +242,6 @@ def main():
                 correo = text_input["correo"],
                 contrasena= text_input["contrasena"],
                 confirmar_contrasena= text_input["confirmar_contrasena"],
-                edad= text_input["edad"],
-                imagen_perfil= "../img",
                 pais= text_input["pais"],
                 nombre_usuario= text_input["nombre_usuario"]
             )
@@ -270,6 +291,19 @@ def main():
         dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100,
                       AZUL_CLARO, NEGRO)
 
+    def verificar_servidor():
+        if not Servidor.servidor_iniciado:
+            pygame_gui.windows.UIConfirmationDialog(
+                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                manager=manager,
+                window_title="Error",
+                action_long_desc="El servidor no está en funcionamiento.",
+                action_short_name="OK",
+                blocking=True
+            )
+            return False
+        return True
+
     # Variable para almacenar el texto real de la contraseña
     texto_real_contrasena = ""
     texto_real_confirmar_contrasena = ""
@@ -293,6 +327,7 @@ def main():
                             elif len(texto_actual) < len(texto_real_contrasena):
                                 texto_real_contrasena = texto_real_contrasena[
                                                         :-1]  # Eliminar el último carácter si se borró
+
                 for key in text_inputs:
                     if evento.ui_element == text_inputs[key]:
                         if key == "confirmar_contrasena":  # Campo de confirmación de contraseña
@@ -363,7 +398,7 @@ def main():
                                     log.append(text_input.get_text())
                                     print(f"{campo}: {text_input.get_text()}")
                             iniciar_sesion(log)
-                            if Ingreso:
+                            if Ingreso == 1:
                                 CrearMazo.iniciar_crear_mazo()
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
@@ -383,6 +418,6 @@ def main():
         manager.draw_ui(ventana)
         pygame.display.update()
 
-
 if __name__ == "__main__":
+
     main()
