@@ -1,6 +1,5 @@
 import pygame
 import sys
-import Model.Cliente
 from Model.Cliente import Cliente
 
 
@@ -38,7 +37,7 @@ def main():
     def pantalla_principal():
         # Dibujar título
         titulo = fuente_texto.render('POWER DECK', True, BLANCO)
-        subtitulo = fuente_texto.render('HERRAMIENTA DE CARTAS', True, BLANCO)
+        subtitulo = fuente_texto.render('EMPAREJAMIENTO', True, BLANCO)
         ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
         ventana.blit(subtitulo, ((ANCHO - subtitulo.get_width()) // 2, 130))
 
