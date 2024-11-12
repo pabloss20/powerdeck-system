@@ -1,5 +1,7 @@
 import json
 import os
+from Model import GestorHash
+
 
 class JsonHandler:
     def __init__(self, archivo):
@@ -55,3 +57,71 @@ class JsonHandler:
             data_json["administradores"].append(info)
 
         self.guardar_info(data_json)
+
+    def obtener_cartas_de_jugador(self, identificador, por_id=True):
+        """
+        Retorna las cartas de un jugador específico.
+
+        Args:
+        - identificador (str): El ID o nombre de usuario del jugador.
+        - por_id (bool): True para buscar por ID, False para buscar por nombre de usuario.
+
+        Returns:
+        - list: Lista de cartas del jugador. Si no se encuentra, retorna una lista vacía.
+        """
+        data = self.cargar_info()
+        for jugador in data.get("jugadores", []):
+            if (por_id and jugador["id"] == identificador) or (not por_id and jugador["nombre_usuario"] == identificador):
+                return jugador.get("cartas", [])
+        return []
+
+    def cargar_datos(self):
+        """
+        Carga la lista de mazos desde el archivo JSON.
+        """
+        if not os.path.exists(self.archivo) or os.path.getsize(self.archivo) == 0:
+            return []
+
+        with open(self.archivo, 'r') as file:
+            try:
+                data = json.load(file)
+                print("Contenido de data:", data)  # Agrega esta línea para ver el contenido
+                return data if isinstance(data, list) else []
+            except json.JSONDecodeError:
+                return []
+
+    def obtener_id_por_correo_y_contrasena(self, correo):
+        """
+        Retorna el ID de un jugador si el correo y la contraseña coinciden.
+
+        Args:
+        - correo (str): El correo del jugador.
+        - contrasena (str): La contraseña en texto plano para verificar.
+
+        Returns:
+        - str: ID del jugador si se encuentra y las credenciales son correctas.
+        - None: Si no se encuentra o las credenciales no coinciden.
+        """
+        data = self.cargar_info()
+
+        for jugador in data.get("jugadores", []):
+            if jugador["correo"] == correo:
+                return jugador["id"]
+        return None
+
+    def obtener_mazos_de_jugador(self, id_jugador):
+        """
+        Retorna los mazos de un jugador específico.
+
+        Args:
+        - id_jugador (str): El ID del jugador.
+
+        Returns:
+        - list: Lista de mazos asociados al jugador. Si no se encuentran mazos, retorna una lista vacía.
+        """
+        data = self.cargar_datos()
+
+        # Buscar los mazos asociados al ID del jugador
+        mazos_jugador = [mazo for mazo in data if mazo.get("jugador") == id_jugador]
+
+        return mazos_jugador

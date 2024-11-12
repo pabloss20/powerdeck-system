@@ -67,7 +67,7 @@ def main():
                         # Enviar un mensaje de ejemplo
                         mensaje = {
                             "accion": "mensaje",
-                            "contenido": "Hola desde el cliente"
+                            "contenido": "Hola soy Joan"
                         }
                         cliente.enviar_mensaje(mensaje)
 

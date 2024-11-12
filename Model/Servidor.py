@@ -35,6 +35,11 @@ class Servidor:
                 mensaje = json.loads(datos.decode('utf-8'))
                 print(f"Mensaje recibido de {direccion}: {mensaje}")
 
+                if mensaje["accion"] == "inicio_sesion_exitoso":
+                    print(f"Inicio de sesión exitoso para el usuario: {mensaje['correo']}")
+                    respuesta = {"estado": "confirmado"}
+                    conexion.sendall(json.dumps(respuesta).encode('utf-8'))
+
                 # Reenvía el mensaje a otros clientes
                 for cliente in self.clientes:
                     if cliente != conexion:  # No enviar al mismo cliente

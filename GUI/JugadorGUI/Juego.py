@@ -1,3 +1,5 @@
+import base64
+
 import pygame
 import pygame_gui
 import sys
@@ -327,6 +329,8 @@ def main():
                             elif len(texto_actual) < len(texto_real_contrasena):
                                 texto_real_contrasena = texto_real_contrasena[
                                                         :-1]  # Eliminar el último carácter si se borró
+                            # Mostrar solo asteriscos en el campo
+                            text_inputs[key].set_text('*' * len(texto_real_contrasena))
 
                 for key in text_inputs:
                     if evento.ui_element == text_inputs[key]:
@@ -399,7 +403,7 @@ def main():
                                     print(f"{campo}: {text_input.get_text()}")
                             iniciar_sesion(log)
                             if Ingreso == 1:
-                                CrearMazo.iniciar_crear_mazo()
+                                CrearMazo.iniciar_crear_mazo(jsonhandler.obtener_id_por_correo_y_contrasena(correo=log[0]))
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"
