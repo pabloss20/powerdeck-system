@@ -1,5 +1,6 @@
 import pygame
 import sys
+import pygame_gui
 from Model.Cliente import Cliente
 import threading
 import CrearMazo
@@ -9,9 +10,11 @@ import math  # Importamos el módulo math
 buscando_partida = False
 oponente_id = ""
 pantalla_actual = ""
+dialogo_exito = None  # Variable global para el diálogo
+mostrando_botones = True  # Variable para controlar si se muestran los botones
 
-def main(id_jugador):
-    global buscando_partida, oponente_id, pantalla_actual
+def main(id_jugador, mazo_seleccionado=None):
+    global buscando_partida, oponente_id, pantalla_actual, dialogo_exito, mostrando_botones
 
     # Inicializar pygame
     pygame.init()
@@ -22,9 +25,11 @@ def main(id_jugador):
     AZUL_CLARO = (100, 149, 237)
 
     # Dimensiones de la ventana
-    ANCHO = 1820  # Cambiado a 1820
-    ALTO = 900  # Cambiado a 900
-
+    ANCHO = 1820
+    ALTO = 900
+    # Configuración de la interfaz de usuario de pygame_gui
+    manager = pygame_gui.UIManager((ANCHO, ALTO))
+    window_surface = pygame.display.set_mode((ANCHO, ALTO))
     # Crear la ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO), pygame.RESIZABLE)
     pygame.display.set_caption('Power Deck App')
@@ -49,33 +54,23 @@ def main(id_jugador):
         pygame.display.update()
 
     # Función para mostrar el círculo giratorio
-    def mostrar_animacion_giratoria(ventana):
+    def mostrar_animacion_giratoria(ventana, tiempo_transcurrido):
         """ Dibuja un círculo giratorio en el centro de la pantalla """
-        clock = pygame.time.Clock()  # Para controlar la velocidad de la animación
-        tiempo_inicial = time.time()
+        # Calcular el ángulo de rotación
+        angulo = (tiempo_transcurrido * 100) % 360  # Girar continuamente
+        centro = (ANCHO // 2, ALTO // 2)
 
-        while buscando_partida:
-            ventana.fill(NEGRO)  # Limpiar la pantalla
-            tiempo_transcurrido = time.time() - tiempo_inicial
+        # Dibujar el círculo giratorio (simulando la animación)
+        pygame.draw.circle(ventana, BLANCO, centro, 50, 5)  # Círculo estático en el centro
 
-            # Calcular el ángulo de rotación
-            angulo = (tiempo_transcurrido * 100) % 360  # Girar continuamente
-            centro = (ANCHO // 2, ALTO // 2)
+        # Dibujar la línea que girará
+        longitud = 40  # Longitud de la línea
+        radianes = math.radians(angulo)  # Usar math.radians() para convertir grados a radianes
+        x_final = centro[0] + longitud * math.cos(radianes)
+        y_final = centro[1] + longitud * math.sin(radianes)
 
-            # Dibujar el círculo giratorio (simulando la animación)
-            pygame.draw.circle(ventana, BLANCO, centro, 50, 5)  # Círculo estático en el centro
-
-            # Dibujar la línea que girará
-            longitud = 40  # Longitud de la línea
-            radianes = math.radians(angulo)  # Usar math.radians() para convertir grados a radianes
-            x_final = centro[0] + longitud * math.cos(radianes)
-            y_final = centro[1] + longitud * math.sin(radianes)
-
-            # Dibuja la línea giratoria
-            pygame.draw.line(ventana, BLANCO, centro, (x_final, y_final), 5)
-
-            pygame.display.update()  # Actualizar pantalla
-            clock.tick(60)  # Controlar la velocidad de la animación
+        # Dibuja la línea giratoria
+        pygame.draw.line(ventana, BLANCO, centro, (x_final, y_final), 5)
 
     # Función para dibujar un botón
     def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo, ventana):
@@ -91,36 +86,77 @@ def main(id_jugador):
         ventana.blit(titulo, ((ANCHO - titulo.get_width()) // 2, 50))
         ventana.blit(subtitulo, ((ANCHO - subtitulo.get_width()) // 2, 130))
 
-        # Dibujar botones
-        dibujar_boton(fuente_texto.render('Album', True, BLANCO),
-                      ANCHO // 2 - 150, ALTO // 2 - 100, 300, 100, AZUL_CLARO, NEGRO, ventana)
+        # Dibujar botones si están habilitados
+        if mostrando_botones:
+            dibujar_boton(fuente_texto.render('Album', True, BLANCO),
+                          ANCHO // 2 - 150, ALTO // 2 - 100, 300, 100, AZUL_CLARO, NEGRO, ventana)
 
-        dibujar_boton(fuente_texto.render('Buscar Partida', True, BLANCO),
-                      ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO, ventana)
+            dibujar_boton(fuente_texto.render('Buscar Partida', True, BLANCO),
+                          ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO, ventana)
 
     # Llamada desde el bucle principal
     def buscar_partida_thread(id_jugador):
-        global buscando_partida, pantalla_actual, oponente_id
+        global buscando_partida, pantalla_actual, oponente_id, mostrando_botones
         buscando_partida = True  # Activamos la animación
+        mostrando_botones = False  # Ocultamos los botones
         cliente = Cliente(host='18.216.53.39', puerto=12345)
         cliente.conectar()
         cliente.buscar_partida(id_jugador)
-
         while cliente.respuesta_partida is None:  # Esperamos la respuesta del servidor
             pygame.event.pump()  # Procesamos eventos de pygame para evitar bloqueo
             time.sleep(0.1)  # Reducimos la carga de la CPU con una pequeña pausa
 
         buscando_partida = False  # Detenemos la animación una vez que recibimos la respuesta
+        mostrando_botones = True  # Volvemos a mostrar los botones
         if cliente.respuesta_partida and cliente.respuesta_partida.get("accion") == "emparejados":
             print(f"¡Partida encontrada! Oponente ID: {cliente.respuesta_partida.get('oponente_id')}")
             oponente_id = cliente.respuesta_partida.get('oponente_id')
             pantalla_actual = "rival_encontrado"
 
+    def mostrar_dialogo(mensaje, ventana):
+        # Fondo del diálogo
+        cuadro_dialogo = pygame.Surface((400, 200))
+        cuadro_dialogo.fill((0, 0, 0))
+        ventana.blit(cuadro_dialogo, (ANCHO // 2 - 200, ALTO // 2 - 100))
 
-    # Bucle principal de Pygame
+        # Texto del mensaje
+        texto = fuente_texto.render(mensaje, True, (255, 255, 255))
+        ventana.blit(texto, (ANCHO // 2 - texto.get_width() // 2, ALTO // 2 - 30))
+
+        # Botón de aceptar
+        boton_texto = fuente_texto.render("Aceptar", True, (255, 255, 255))
+        pygame.draw.rect(ventana, AZUL_CLARO, (ANCHO // 2 - 100, ALTO // 2 + 50, 200, 50))
+        ventana.blit(boton_texto, (ANCHO // 2 - boton_texto.get_width() // 2, ALTO // 2 + 60))
+        pygame.display.update()
+
+        # Coordenadas del botón "Aceptar"
+        cuadro_dialogo_rect = pygame.Rect(ANCHO // 2 - 100, ALTO // 2 + 50, 200, 50)
+
+        # Esperar hasta que el jugador haga clic en "Aceptar"
+        esperando = True
+        while esperando:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if cuadro_dialogo_rect.collidepoint(mouse_pos):
+                        esperando = False  # Salir del bucle cuando el jugador haga clic en "Aceptar"
+
+            # Actualizar la pantalla
+            pygame.display.update()
+
+    clock = pygame.time.Clock()
+    tiempo_inicial = time.time()
+
     while True:
-        flag = True
+        time_delta = clock.tick(60) / 1000.0
+        tiempo_transcurrido = time.time() - tiempo_inicial
+
         for evento in pygame.event.get():
+            manager.process_events(evento)
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -129,37 +165,33 @@ def main(id_jugador):
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     # Verificar si se ha hecho clic en el botón "Crear Carta"
-                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 - 100 <= mouse_pos[
-                        1] <= ALTO // 2:
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 - 100 <= mouse_pos[1] <= ALTO // 2:
                         CrearMazo.iniciar_crear_mazo(pj_id=id_jugador)
                     # Verificar si se ha hecho clic en el botón "Buscar Partida"
-                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[
-                        1] <= ALTO // 2 + 150:
-                        if not buscando_partida:  # Evitar iniciar un nuevo hilo si ya estamos buscando
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[1] <= ALTO // 2 + 150:
+                        if mazo_seleccionado is None:
+                            mostrar_dialogo("¡El mazo no ha sido seleccionado!", ventana)
+
+                        if not buscando_partida and mazo_seleccionado is not None:
                             try:
-                                threading.Thread(target=buscar_partida_thread, args=(id_jugador,),
-                                                 daemon=True).start()
+                                threading.Thread(target=buscar_partida_thread, args=(id_jugador,), daemon=True).start()
                             except Exception as e:
                                 print(f"Error al conectar: {e}")
                                 buscando_partida = False  # Reinicia el estado en caso de error
 
-        # Mostrar animación mientras buscamos partida
-        if buscando_partida:
-            mostrar_animacion_giratoria(ventana)
-
-        # Rellenar la pantalla de negro
         ventana.fill(NEGRO)
 
-        # Dibujar la pantalla correspondiente
+        if buscando_partida:
+            mostrar_animacion_giratoria(ventana, tiempo_transcurrido)
+
         if pantalla_actual == "principal":
             pantalla_principal()
-
         elif pantalla_actual == "rival_encontrado":
-            pantalla_rival_encontrado(ventana,oponente_id)
+            pantalla_rival_encontrado(ventana, oponente_id)
 
-        # Actualizar la pantalla
         pygame.display.update()
-
+        manager.draw_ui(window_surface)
+        manager.update(time_delta)
 
 if __name__ == "__main__":
     main("U-g21FInBATQQx-A-7ns2eMPbIaQZ")

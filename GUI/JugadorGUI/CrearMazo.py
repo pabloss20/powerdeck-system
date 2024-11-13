@@ -38,7 +38,6 @@ def cargar_nombres_mazos(pj_id):
     try:
         mazos = mazos_H.obtener_mazos_de_jugador(pj_id)
         nombres_mazos = [mazo.get("nombre","Mazo sin nombre") for mazo in mazos]
-        print(mazos)
     except FileNotFoundError:
         print("El archivo 'mazo.json' no se encontró.")
     return nombres_mazos
@@ -46,6 +45,7 @@ def cargar_nombres_mazos(pj_id):
 def iniciar_crear_mazo(pj_id):
     # Cargar cartas desde el JSON
     cartas = cargar_cartas(pj_id)
+    mazo_seleccionado = None
 
     # Cargar imágenes de las cartas
     cartas_imagenes = []
@@ -145,10 +145,13 @@ def iniciar_crear_mazo(pj_id):
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    print("Evento de botón presionado:", event.ui_element)  # Para verificar el evento
+                    print("Evento de botón presionado:", event.ui_element)
+                    if event.ui_element.text in nombres_mazos:
+                        print(event.ui_element.text)
+                        mazo_seleccionado = event.ui_element.text
                     if event.ui_element == boton_atras:
                         actualizar_contenido()
-                        MatchMaking.main(pj_id)
+                        MatchMaking.main(pj_id, mazo_seleccionado)
                     elif event.ui_element == boton_nuevo_mazo:
                         actualizar_contenido()
                         NuevoMazo.nuevo_mazo(event, pj_id)

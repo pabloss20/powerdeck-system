@@ -20,12 +20,14 @@ class Cliente:
 
         except Exception as e:
             print(f"Error al conectar: {e}")
+            return e
 
     def enviar_mensaje(self, mensaje):
         try:
             self.cliente_socket.sendall(json.dumps(mensaje).encode('utf-8'))
         except Exception as e:
             print(f"Error al enviar el mensaje: {e}")
+            return e
 
     def buscar_partida(self, id_jugador):
         # Enviar la solicitud de buscar partida con la ID del jugador
