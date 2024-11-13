@@ -85,7 +85,6 @@ class JsonHandler:
         with open(self.archivo, 'r') as file:
             try:
                 data = json.load(file)
-                print("Contenido de data:", data)  # Agrega esta línea para ver el contenido
                 return data if isinstance(data, list) else []
             except json.JSONDecodeError:
                 return []

@@ -128,6 +128,7 @@ def iniciar_crear_mazo(pj_id):
         # Eliminar contenido existente
         for element in contenedor_cartas.get_container().elements:
             element.hide()
+        lista_mazos.hide()
         boton_atras.hide()
         boton_nuevo_mazo.hide()
 

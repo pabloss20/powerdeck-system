@@ -53,24 +53,30 @@ def main(id_jugador, mazo_seleccionado=None):
         ventana.blit(renderizado_texto, rect_texto)
         pygame.display.update()
 
-    # Función para mostrar el círculo giratorio
-    def mostrar_animacion_giratoria(ventana, tiempo_transcurrido):
-        """ Dibuja un círculo giratorio en el centro de la pantalla """
+    # Función para mostrar el círculo giratorio y el temporizador
+    def mostrar_animacion_giratoria(ventana, tiempo_transcurrido, tiempo_restante):
+        """Dibuja un círculo giratorio y muestra el temporizador en el centro de la pantalla."""
         # Calcular el ángulo de rotación
-        angulo = (tiempo_transcurrido * 100) % 360  # Girar continuamente
+        angulo = (tiempo_transcurrido * 100) % 360
         centro = (ANCHO // 2, ALTO // 2)
 
         # Dibujar el círculo giratorio (simulando la animación)
-        pygame.draw.circle(ventana, BLANCO, centro, 50, 5)  # Círculo estático en el centro
+        pygame.draw.circle(ventana, BLANCO, centro, 50, 5)
 
         # Dibujar la línea que girará
-        longitud = 40  # Longitud de la línea
-        radianes = math.radians(angulo)  # Usar math.radians() para convertir grados a radianes
+        longitud = 40
+        radianes = math.radians(angulo)
         x_final = centro[0] + longitud * math.cos(radianes)
         y_final = centro[1] + longitud * math.sin(radianes)
 
-        # Dibuja la línea giratoria
+        # Dibujar la línea giratoria
         pygame.draw.line(ventana, BLANCO, centro, (x_final, y_final), 5)
+
+        # Mostrar el tiempo restante en la pantalla
+        fuente = pygame.font.Font(None, 36)  # Puedes ajustar el tamaño de la fuente aquí
+        texto_tiempo = fuente.render(f"Tiempo restante: {int(tiempo_restante)} s", True, BLANCO)
+        ventana.blit(texto_tiempo, (centro[0] - texto_tiempo.get_width() // 2, centro[1] + 60))
+        dibujar_boton(fuente_texto.render("CANCELAR", True,BLANCO),ANCHO//2 - 150,ALTO // 2 + 200, 300, 100, BLANCO, NEGRO, ventana)
 
     # Función para dibujar un botón
     def dibujar_boton(texto, x, y, ancho, alto, color_borde, color_fondo, ventana):
@@ -105,6 +111,9 @@ def main(id_jugador, mazo_seleccionado=None):
         while cliente.respuesta_partida is None:  # Esperamos la respuesta del servidor
             pygame.event.pump()  # Procesamos eventos de pygame para evitar bloqueo
             time.sleep(0.1)  # Reducimos la carga de la CPU con una pequeña pausa
+            if not buscando_partida:
+                cliente.cerrar_conexion()
+                break
 
         buscando_partida = False  # Detenemos la animación una vez que recibimos la respuesta
         mostrando_botones = True  # Volvemos a mostrar los botones
@@ -112,7 +121,6 @@ def main(id_jugador, mazo_seleccionado=None):
             print(f"¡Partida encontrada! Oponente ID: {cliente.respuesta_partida.get('oponente_id')}")
             oponente_id = cliente.respuesta_partida.get('oponente_id')
             pantalla_actual = "rival_encontrado"
-
     def mostrar_dialogo(mensaje, ventana):
         # Fondo del diálogo
         cuadro_dialogo = pygame.Surface((400, 200))
@@ -150,30 +158,42 @@ def main(id_jugador, mazo_seleccionado=None):
 
     clock = pygame.time.Clock()
     tiempo_inicial = time.time()
-
+    tiempo_limite = 60  # Tiempo límite en segundos
     while True:
         time_delta = clock.tick(60) / 1000.0
         tiempo_transcurrido = time.time() - tiempo_inicial
+        tiempo_restante = max(0, tiempo_limite - tiempo_transcurrido)
 
         for evento in pygame.event.get():
             manager.process_events(evento)
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if pantalla_actual == "Buscando":
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 200 <= mouse_pos[1] <= ALTO // 2 + 300:
+                        buscando_partida = False
+                        pantalla_actual = "principal"
+                        mostrando_botones = True
 
             if pantalla_actual == "principal":
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     # Verificar si se ha hecho clic en el botón "Crear Carta"
-                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 - 100 <= mouse_pos[1] <= ALTO // 2:
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 - 100 <= mouse_pos[
+                        1] <= ALTO // 2 and pantalla_actual == "principal":
                         CrearMazo.iniciar_crear_mazo(pj_id=id_jugador)
                     # Verificar si se ha hecho clic en el botón "Buscar Partida"
-                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[1] <= ALTO // 2 + 150:
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[
+                        1] <= ALTO // 2 + 150 and pantalla_actual == "principal":
                         if mazo_seleccionado is None:
                             mostrar_dialogo("¡El mazo no ha sido seleccionado!", ventana)
 
                         if not buscando_partida and mazo_seleccionado is not None:
                             try:
+                                pantalla_actual = "Buscando"
+                                tiempo_inicial = time.time()  # Reinicia el temporizador cada vez que comienza la búsqueda
                                 threading.Thread(target=buscar_partida_thread, args=(id_jugador,), daemon=True).start()
                             except Exception as e:
                                 buscando_partida = False  # Reinicia el estado en caso de error
@@ -181,7 +201,13 @@ def main(id_jugador, mazo_seleccionado=None):
         ventana.fill(NEGRO)
 
         if buscando_partida:
-            mostrar_animacion_giratoria(ventana, tiempo_transcurrido)
+            # Llama a la función de animación y muestra el temporizador
+            mostrar_animacion_giratoria(ventana, tiempo_transcurrido, tiempo_restante)
+            if tiempo_restante <= 0:
+                mostrando_botones = True
+                pantalla_actual = "principal"
+                buscando_partida = False  # Detener la búsqueda cuando el tiempo se agota
+
 
         if pantalla_actual == "principal":
             pantalla_principal()
