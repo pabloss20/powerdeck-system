@@ -1,96 +1,86 @@
 [
     {
-        "nombre": "MazoEjemplo",
-        "fecha_creacion": "2024-10-30T08:00:22.607943",
-        "fecha_modificacion": "2024-10-30T08:00:22.607943",
+        "nombre": "PruebaPrimera",
+        "fecha_creacion": "2024-11-12T14:19:23.196948",
+        "fecha_modificacion": "2024-11-12T14:19:23.196948",
         "cartas": [
-            "carta-1",
-            "carta-11",
-            "carta-13",
-            "carta-4",
-            "carta-12",
-            "carta-9",
-            "carta-10",
-            "carta-7",
-            "carta-0",
-            "carta-2",
-            "carta-6",
-            "carta-14",
-            "carta-8",
-            "carta-3",
-            "carta-5"
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ",
+            "C-nVDONSWFH22H-V-iB6Eq47Pk5yu"
         ],
-        "max_cartas": 15,
-        "keyid": "D-gQyGyzRfUG4W"
+        "max_cartas": 2,
+        "keyid": "D-6dBTfskDkeTV",
+        "jugador": "U-g21FInBATQQx-A-7ns2eMPbIaQZ"
+    },
+    {
+        "nombre": "OtreoMAzo",
+        "fecha_creacion": "2024-11-12T14:30:38.041765",
+        "fecha_modificacion": "2024-11-12T14:30:38.041765",
+        "cartas": [
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ",
+            "C-nVDONSWFH22H-V-iB6Eq47Pk5yu"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-hkBBgkoA40Nt",
+        "jugador": "U-g21FInBATQQx-A-7ns2eMPbIaQZ"
+    },
+    {
+        "nombre": "Hellowa",
+        "fecha_creacion": "2024-11-12T14:30:38.041765",
+        "fecha_modificacion": "2024-11-12T14:30:38.041765",
+        "cartas": [
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ",
+            "C-nVDONSWFH22H-V-iB6Eq47Pk5yu"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-hkBBgkoA40Nt",
+        "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
+    },
+    {
+        "nombre": "PruebaPrimera",
+        "fecha_creacion": "2024-11-12T14:38:29.701167",
+        "fecha_modificacion": "2024-11-12T14:38:29.701167",
+        "cartas": [
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ",
+            "C-jtTwCbHBAbL6-V-fQDPjB2Rszc0"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-DEE9elk3foP3",
+        "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
     },
     {
         "nombre": "Nombre del Mazo",
-        "fecha_creacion": "2024-10-30T11:46:32.224405",
-        "fecha_modificacion": "2024-10-30T11:46:32.224405",
+        "fecha_creacion": "2024-11-12T20:26:38.801192",
+        "fecha_modificacion": "2024-11-12T20:26:38.801192",
         "cartas": [
-            "C-qCICaPYdqYUj-V-1oPAawPAlrzL",
-            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
-            "C-qCICaPedqYUj-V-1oPAawPAlrzL",
-            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
-            "C-0fJCnpZqtsND-V-RxFckwkzO8KH",
-            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL",
-            "C-0fJCnpZ9tsND-V-RxFckhkzO8KH",
-            "C-2sEtiVqPy4Y3-V-hxA8UeTnNZzZ",
-            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
-            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
-            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
-            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
-            "C-qCICaaYdqYUj-V-1oPAawPAlrzL",
-            "C-0fJCnps9tsND-V-RxFckwkzO8KH",
-            "C-qChCaPYdqYUj-V-1oPAawPAlrzL"
-        ],
-        "max_cartas": 15,
-        "keyid": "D-FOZa79VkI0IB"
-    },
-    {
-        "nombre": "23454",
-        "fecha_creacion": "2024-10-31T18:54:45.688449",
-        "fecha_modificacion": "2024-10-31T18:54:45.688449",
-        "cartas": [
-            "C-0fJCntZ9tsND-V-RxFckwkzO8KH",
-            "C-0fgCnpZ9tsND-V-RxFckwkzO8KH",
-            "C-qCICaPYdqYUj-V-1oPAawlAlrzL",
-            "C-qCICaPYddYUj-V-1oPAawPAlrzL",
-            "C-qCICaPYdqYUj-V-1oPAawPAirzL",
-            "C-0fJCnpZ9tnND-V-RxFckwkzO8KH",
-            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
-            "C-qCICaPYdqYUj-V-1oPAjwPAlrzL",
-            "C-qChCaPYdqYUj-V-1oPAawPAlrzL",
-            "C-qCICaPYdqYUj-V-1oPAawPAlrzL",
-            "C-0fJChpZ9tsND-V-RxFckwkzO8KH",
-            "C-0fJCnpZ9tsND-V-RxFgkwkzO8KH",
-            "C-0fJCnpZ9tsND-V-RfFckwkzO8KH",
-            "C-0fJCnpZ9tsND-V-RxFckwkzOpKH",
-            "C-0fJCnpZ9tsND-V-RxFckwkkk8KH"
-        ],
-        "max_cartas": 15,
-        "keyid": "D-WeoTyUnutRtc"
-    },
-    {
-        "nombre": "Sprint2",
-        "fecha_creacion": "2024-10-31T20:27:37.273774",
-        "fecha_modificacion": "2024-10-31T20:27:37.273774",
-        "cartas": [
-            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
-            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL"
+            "C-k6gCsHfAP0OY-V-RWdtSmNKE1dX",
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ"
         ],
         "max_cartas": 2,
-        "keyid": "D-Ti2311rRKjtY"
+        "keyid": "D-MFJnK1CJekjT",
+        "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
     },
     {
-        "nombre": "Repetido",
-        "fecha_creacion": "2024-10-31T20:29:14.969247",
-        "fecha_modificacion": "2024-10-31T20:29:14.969247",
+        "nombre": "PrimerMazo",
+        "fecha_creacion": "2024-11-13T13:55:34.115474",
+        "fecha_modificacion": "2024-11-13T13:55:34.115474",
         "cartas": [
-            "C-qCICarYdqYUj-V-1oPAawPAlrzL",
-            "C-qCICaPYdqYUj-V-1oPAgwPAlrzL"
+            "C-3uP4yfmA14Ld-V-rHj8ontjBLim",
+            "C-N0UOL2OWFggq-V-MmwzGekyk7vy"
         ],
         "max_cartas": 2,
-        "keyid": "D-Dbxfmpq8UsuZ"
+        "keyid": "D-ubBEj2mNgHJK",
+        "jugador": "U-7mVciUEZGONA-A-PaFhQWRYa7cm"
+    },
+    {
+        "nombre": "Prime",
+        "fecha_creacion": "2024-11-13T13:56:53.146365",
+        "fecha_modificacion": "2024-11-13T13:56:53.146365",
+        "cartas": [
+            "C-3uP4yfmA14Ld-V-rHj8ontjBLim",
+            "C-N0UOL2OWFggq-V-MmwzGekyk7vy"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-TeDPZspyLf9c",
+        "jugador": "U-7mVciUEZGONA-A-PaFhQWRYa7cm"
     }
 ]

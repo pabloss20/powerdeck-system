@@ -3,6 +3,9 @@ import pygame_gui
 import json
 import os
 import NuevoMazo
+import Model.JsonHandler
+from Model.JsonHandler import JsonHandler
+import MatchMaking
 
 # Inicializar Pygame y Pygame GUI
 pygame.init()
@@ -15,21 +18,14 @@ background.fill(pygame.Color('#ffffff'))
 # Configuración de la interfaz de usuario de pygame_gui
 manager = pygame_gui.UIManager(window_size)
 
-# Definir la ruta base para la carpeta de imágenes
-BASE_DIR = "..\.."
-
+# Cargar datos desde el archivo
+handler = JsonHandler('../../Files/usuarios.json')
+mazos_H = JsonHandler('../../Files/mazo.json')
 
 # Función para cargar cartas desde el JSON de jugadores
-def cargar_cartas():
+def cargar_cartas(id_jugador):
     try:
-        with open("../../Files/jugadores.json", "r") as file:
-            jugadores_data = json.load(file)
-
-        # Extrae las cartas de cada jugador
-        cartas_data = []
-        for jugador in jugadores_data:
-            if "cartas" in jugador:
-                cartas_data.extend(jugador["cartas"])  # Agrega todas las cartas del jugador a la lista
+        cartas_data = handler.obtener_cartas_de_jugador(id_jugador,por_id=True)
 
         return cartas_data
     except FileNotFoundError:
@@ -37,26 +33,25 @@ def cargar_cartas():
         return []
 
 # Función para cargar nombres de mazos desde el JSON
-def cargar_nombres_mazos():
+def cargar_nombres_mazos(pj_id):
     nombres_mazos = []
     try:
-        with open("../../Files/mazo.json", "r") as file:
-            mazos_data = json.load(file)
-            # Obtener el atributo "nombre" de cada mazo
-            nombres_mazos = [mazo.get("nombre", "Mazo sin nombre") for mazo in mazos_data]
+        mazos = mazos_H.obtener_mazos_de_jugador(pj_id)
+        nombres_mazos = [mazo.get("nombre","Mazo sin nombre") for mazo in mazos]
     except FileNotFoundError:
         print("El archivo 'mazo.json' no se encontró.")
     return nombres_mazos
 
-def iniciar_crear_mazo():
+def iniciar_crear_mazo(pj_id):
     # Cargar cartas desde el JSON
-    cartas = cargar_cartas()
+    cartas = cargar_cartas(pj_id)
+    mazo_seleccionado = None
 
     # Cargar imágenes de las cartas
     cartas_imagenes = []
     for carta in cartas:
         imagen_rel_path = carta.get("imagen")
-        imagen_path = os.path.join(BASE_DIR, imagen_rel_path)
+        imagen_path = os.path.join(imagen_rel_path)
         if imagen_rel_path and os.path.exists(imagen_path):
             imagen = pygame.image.load(imagen_path)
             imagen = pygame.transform.scale(imagen, (150, 200))
@@ -95,7 +90,7 @@ def iniciar_crear_mazo():
         manager=manager)
 
     # Cargar los nombres de los mazos y mostrarlos en la lista
-    nombres_mazos = cargar_nombres_mazos()
+    nombres_mazos = cargar_nombres_mazos(pj_id)
     lista_mazos = pygame_gui.elements.UISelectionList(relative_rect=pygame.Rect((panel_derecha_x + 10, 100),
                                                                                 (panel_derecha_ancho - 20,
                                                                                  panel_derecha_alto)),
@@ -113,7 +108,7 @@ def iniciar_crear_mazo():
 
     # Diccionario para asociar cada UIImage con su llave
     cartas_ui = {}
-    cartas_data = cargar_cartas()
+    cartas_data = cargar_cartas(pj_id)
 
     # Crear cada carta y asociarla a su llave
     for i, carta in enumerate(cartas_data):
@@ -129,7 +124,14 @@ def iniciar_crear_mazo():
 
         # Asocia la carta con su llave en el diccionario
         cartas_ui[carta_imagen] = carta["llave"]
-        print(f"Asociando carta con llave: {carta['llave']}")  # Para verificar la asociación
+    def actualizar_contenido():
+        # Eliminar contenido existente
+        for element in contenedor_cartas.get_container().elements:
+            element.hide()
+        lista_mazos.hide()
+        boton_atras.hide()
+        boton_nuevo_mazo.hide()
+
 
     # Loop principal
     clock = pygame.time.Clock()
@@ -143,11 +145,14 @@ def iniciar_crear_mazo():
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    print("Evento de botón presionado:", event.ui_element)  # Para verificar el evento
+                    if event.ui_element.text in nombres_mazos:
+                        mazo_seleccionado = event.ui_element.text
                     if event.ui_element == boton_atras:
-                        is_running = False  # Cierra la ventana
+                        actualizar_contenido()
+                        MatchMaking.main(pj_id, mazo_seleccionado)
                     elif event.ui_element == boton_nuevo_mazo:
-                        NuevoMazo.nuevo_mazo(event)
+                        actualizar_contenido()
+                        NuevoMazo.nuevo_mazo(event, pj_id)
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # 1 es el botón izquierdo del ratón
                 mouse_pos = pygame.mouse.get_pos()
                 for carta_imagen, llave in cartas_ui.items():
@@ -170,4 +175,4 @@ def iniciar_crear_mazo():
 
 
 if __name__ == "__main__":
-    iniciar_crear_mazo()
+    iniciar_crear_mazo("U-ySOghpOH3ykv-A-NUcWpD5NeGpt")

@@ -3,7 +3,7 @@ import pygame_gui
 import json
 import pygame_gui.elements
 import os
-
+import AdministradorGUI
 # Inicializar Pygame y Pygame GUI
 pygame.init()
 window_size = (1820, 900)
@@ -98,6 +98,8 @@ def iniciar_galeria():
         # Eliminar contenido existente
         for element in contenedor_cartas.get_container().elements:
             element.hide()
+        boton_atras.hide()
+        boton_filtro.hide()
 
         # Aplicar filtro
         cartas_mostradas = filtrar_cartas(cartas, mostrar_principales=con_filtro)
@@ -154,7 +156,8 @@ def iniciar_galeria():
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == boton_atras:
-                        is_running = False
+                        actualizar_contenido()
+                        AdministradorGUI.main()
                     if event.ui_element == boton_filtro:
                         con_filtro = not con_filtro
                         actualizar_contenido()

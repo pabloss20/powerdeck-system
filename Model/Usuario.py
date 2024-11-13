@@ -4,6 +4,7 @@ import base64
 import socket
 import json
 
+IP = "13.59.218.37"
 class Usuario:
 
     def __init__(self, nombre, apellido, correo, contrasena):
@@ -21,7 +22,7 @@ class Usuario:
     def validar_datos(self):
         raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
 
-    def conectar_servidor(self, host='127.0.0.1', puerto=12345):
+    def conectar_servidor(self, host=IP, puerto=12345):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conexion:
                 conexion.connect((host, puerto))

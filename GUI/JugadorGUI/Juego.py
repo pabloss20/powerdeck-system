@@ -7,6 +7,7 @@ from Model.JsonHandler import JsonHandler
 import CrearMazo
 from Model import Servidor
 from Model.Usuario import Usuario
+import MatchMaking
 
 def main():
     pygame.init()
@@ -304,7 +305,7 @@ def main():
             return False
         return True
 
-    # Variable para almacenar el texto real de la contraseña
+    #Variable para almacenar el texto real de la contraseña
     texto_real_contrasena = ""
     texto_real_confirmar_contrasena = ""
     # Bucle principal
@@ -327,6 +328,8 @@ def main():
                             elif len(texto_actual) < len(texto_real_contrasena):
                                 texto_real_contrasena = texto_real_contrasena[
                                                         :-1]  # Eliminar el último carácter si se borró
+                            # Mostrar solo asteriscos en el campo
+                            text_inputs_login[key].set_text('*' * len(texto_real_contrasena))
 
                 for key in text_inputs:
                     if evento.ui_element == text_inputs[key]:
@@ -399,7 +402,7 @@ def main():
                                     print(f"{campo}: {text_input.get_text()}")
                             iniciar_sesion(log)
                             if Ingreso == 1:
-                                CrearMazo.iniciar_crear_mazo()
+                                MatchMaking.main(jsonhandler.obtener_id_por_correo_y_contrasena(correo=log[0]))
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"

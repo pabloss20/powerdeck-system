@@ -6,6 +6,7 @@ from Model.Jugador import Jugador
 from Model.Administrador import Administrador
 from Model.Usuario import Usuario
 import AdminReportesGUI
+import AdministradorGUI
 
 def main():
     pygame.init()
@@ -113,7 +114,7 @@ def main():
                     action_short_name="OK",
                     blocking=True
                 )
-                Ingreso = 2
+                Ingreso = 3
 
             elif resultado == 3:
                 # Usuario autenticado como administrador de reportes
@@ -126,7 +127,7 @@ def main():
                     action_short_name="OK",
                     blocking=True
                 )
-                Ingreso = 3
+                Ingreso = 2
 
             else:
                 # Caso en el que el resultado es "Usuario no encontrado" o "Contraseña incorrecta"
@@ -204,8 +205,8 @@ def main():
                             if Ingreso == 2:
                                 AdminReportesGUI.iniciar_reportes_gui()
                             elif Ingreso == 3:
-                                #AdministradorGUI.main() # No me funciona por PIL
-                                pass
+                                AdministradorGUI.main()
+
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"

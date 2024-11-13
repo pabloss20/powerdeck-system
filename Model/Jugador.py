@@ -67,7 +67,6 @@ class Jugador(Usuario):
             raise ValueError("La contraseña debe incluir al menos una letra.")
 
     def registrar_usuario(self):
-
         # Verificar si el servidor está disponible antes de registrar
         if not self.verificar_servidor():
             raise ValueError("No se puede registrar el administrador. El servidor no está disponible.")

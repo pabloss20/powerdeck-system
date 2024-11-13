@@ -6,13 +6,13 @@ import os
 from collections import Counter
 
 class Mazo:
-    def __init__(self, nombre, max_cartas=2, filepath="../../Files/mazo.json", fileCartas="../../Files/cartas.json"):
+    def __init__(self, nombre, jugador_id, max_cartas=2, filepath="../../Files/mazo.json", fileCartas="../../Files/cartas.json"):
         # Validación de longitud del nombre
         if not (5 <= len(nombre) <= 30):
             raise ValueError("El nombre del mazo debe tener entre 5 y 30 caracteres.")
 
         # Verificar si el nombre ya existe en el archivo JSON
-        if self._nombre_mazo_existe(nombre, filepath):
+        if self._nombre_mazo_existe(nombre,jugador_id, filepath):
             raise ValueError(f"Ya existe un mazo con el nombre '{nombre}', no se puede duplicar.")
 
         self.nombre = nombre
@@ -23,16 +23,33 @@ class Mazo:
         self.keyid = self._generate_unique_key()
         self.filepath = filepath
         self.fileCartas = fileCartas
+        self.jugador_id = jugador_id
 
     def _generate_unique_key(self):
         key = f"D-{''.join(random.choices(string.ascii_letters + string.digits, k=12))}"
         return key
 
-    def _nombre_mazo_existe(self, nombre, filepath):
+    def _nombre_mazo_existe(self, nombre, jugador_id, filepath):
+        """
+        Verifica si un jugador específico ya tiene un mazo con un nombre dado.
+
+        Args:
+        - nombre (str): El nombre del mazo a verificar.
+        - jugador_id (str): El ID del jugador.
+        - filepath (str): La ruta del archivo JSON que contiene los mazos.
+
+        Returns:
+        - bool: True si el jugador ya tiene un mazo con ese nombre, False de lo contrario.
+        """
         if os.path.exists(filepath):
             with open(filepath, "r") as file:
-                mazos = json.load(file)
-                return any(mazo["nombre"] == nombre for mazo in mazos)
+                try:
+                    mazos = json.load(file)
+                    # Verificar si el jugador tiene un mazo con el nombre dado
+                    return any(mazo["jugador"] == jugador_id and mazo["nombre"] == nombre for mazo in mazos)
+                except json.JSONDecodeError:
+                    print("Error al decodificar el archivo JSON.")
+                    return False
         return False
 
     def agregar_carta(self, carta_id):
@@ -85,7 +102,8 @@ class Mazo:
             "fecha_modificacion": self.fecha_modificacion.isoformat(),
             "cartas": list(self.cartas),
             "max_cartas": self.max_cartas,
-            "keyid": self.keyid
+            "keyid": self.keyid,
+            "jugador": self.jugador_id
         }
 
     def guardar_en_json(self):
@@ -101,16 +119,3 @@ class Mazo:
 
         with open(self.filepath, "w") as file:
             json.dump(all_data, file, indent=4)
-
-# Ejemplo de uso
-try:
-    mi_mazo = Mazo("MazoEjemplo")
-    # Agregar cartas con ids simulados
-    for i in range(15):
-        mi_mazo.agregar_carta(f"carta-{i}")
-    mi_mazo.es_valido()
-    mi_mazo.guardar_en_json()
-    mi_mazo.verificar_rareza()
-    print("Mazo creado y guardado en JSON correctamente:", mi_mazo.keyid)
-except ValueError as e:
-    print("Error al crear el mazo:", e)

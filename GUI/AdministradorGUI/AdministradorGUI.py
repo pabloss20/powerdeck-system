@@ -1,7 +1,7 @@
 import pygame
 import sys
 from GUI.AdministradorGUI import CrearCarta
-
+import Galeria
 
 def main():
     # Inicializar pygame
@@ -67,8 +67,7 @@ def main():
             elif pantalla_actual == "crear_carta":
                 CrearCarta.iniciar_crear_carta()
             elif pantalla_actual == "ver_album":
-                #Galeria.iniciar_galeria()  # Llamar a la función de galería desde el archivo correspondiente
-                pass
+                Galeria.iniciar_galeria()  # Llamar a la función de galería desde el archivo correspondiente
 
         # Rellenar la pantalla de negro
         ventana.fill(NEGRO)
