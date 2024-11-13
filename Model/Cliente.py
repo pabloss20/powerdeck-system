@@ -3,7 +3,7 @@ import threading
 import json
 
 class Cliente:
-    def __init__(self, host='18.216.53.39', puerto=12345):
+    def __init__(self, host='13.59.218.37', puerto=12345):
         self.host = host
         self.puerto = puerto
         self.cliente_socket = None
@@ -65,7 +65,7 @@ class Cliente:
             print("Conexión cerrada.")
 
 if __name__ == "__main__":
-    cliente = Cliente(host='18.216.53.39', puerto=12345)
+    cliente = Cliente(host='13.59.218.37', puerto=12345)
     cliente.conectar()
 
     # Supón que el cliente tiene su ID ya asignada

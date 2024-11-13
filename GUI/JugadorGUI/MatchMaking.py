@@ -99,7 +99,7 @@ def main(id_jugador, mazo_seleccionado=None):
         global buscando_partida, pantalla_actual, oponente_id, mostrando_botones
         buscando_partida = True  # Activamos la animación
         mostrando_botones = False  # Ocultamos los botones
-        cliente = Cliente(host='18.216.53.39', puerto=12345)
+        cliente = Cliente(puerto=12345)
         cliente.conectar()
         cliente.buscar_partida(id_jugador)
         while cliente.respuesta_partida is None:  # Esperamos la respuesta del servidor

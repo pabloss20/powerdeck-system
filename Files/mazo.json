@@ -46,5 +46,17 @@
         "max_cartas": 2,
         "keyid": "D-DEE9elk3foP3",
         "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
+    },
+    {
+        "nombre": "Nombre del Mazo",
+        "fecha_creacion": "2024-11-12T20:26:38.801192",
+        "fecha_modificacion": "2024-11-12T20:26:38.801192",
+        "cartas": [
+            "C-k6gCsHfAP0OY-V-RWdtSmNKE1dX",
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-MFJnK1CJekjT",
+        "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
     }
 ]
