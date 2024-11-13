@@ -196,6 +196,14 @@ def nuevo_mazo(event, pj_id):
                 action_short_name="OK",
                 blocking=True
             )
+    def actualizar_contenido():
+        # Eliminar contenido existente
+        for element in contenedor_cartas_izquierda.get_container().elements:
+            element.hide()
+        for element in contenedor_cartas_derecha.get_container().elements:
+            element.hide()
+        boton_atras.hide()
+        boton_listo.hide()
 
     # Loop principal
     clock = pygame.time.Clock()
@@ -211,11 +219,13 @@ def nuevo_mazo(event, pj_id):
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED and dialogo_exito_abierto:
                     # Llama a la función iniciar_crear_mazo al hacer clic en "OK"
+                    actualizar_contenido()
                     CrearMazo.iniciar_crear_mazo(pj_id)
                     dialogo_exito_abierto = False
 
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == boton_atras:
+                        actualizar_contenido()
                         CrearMazo.iniciar_crear_mazo(pj_id)
                     elif event.ui_element == boton_listo:
                         nombre_del_mazo = input_nombre_mazo.get_text()

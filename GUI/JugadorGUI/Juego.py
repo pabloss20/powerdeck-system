@@ -1,5 +1,3 @@
-import base64
-
 import pygame
 import pygame_gui
 import sys
@@ -9,6 +7,7 @@ from Model.JsonHandler import JsonHandler
 import CrearMazo
 from Model import Servidor
 from Model.Usuario import Usuario
+import MatchMaking
 
 def main():
     pygame.init()
@@ -403,7 +402,7 @@ def main():
                                     print(f"{campo}: {text_input.get_text()}")
                             iniciar_sesion(log)
                             if Ingreso == 1:
-                                CrearMazo.iniciar_crear_mazo(jsonhandler.obtener_id_por_correo_y_contrasena(correo=log[0]))
+                                MatchMaking.main(jsonhandler.obtener_id_por_correo_y_contrasena(correo=log[0]))
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
                             pantalla_actual = "principal"

@@ -5,6 +5,7 @@ import os
 import NuevoMazo
 import Model.JsonHandler
 from Model.JsonHandler import JsonHandler
+import MatchMaking
 
 # Inicializar Pygame y Pygame GUI
 pygame.init()
@@ -124,6 +125,13 @@ def iniciar_crear_mazo(pj_id):
         # Asocia la carta con su llave en el diccionario
         cartas_ui[carta_imagen] = carta["llave"]
         print(f"Asociando carta con llave: {carta['llave']}")  # Para verificar la asociación
+    def actualizar_contenido():
+        # Eliminar contenido existente
+        for element in contenedor_cartas.get_container().elements:
+            element.hide()
+        boton_atras.hide()
+        boton_nuevo_mazo.hide()
+
 
     # Loop principal
     clock = pygame.time.Clock()
@@ -139,8 +147,10 @@ def iniciar_crear_mazo(pj_id):
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     print("Evento de botón presionado:", event.ui_element)  # Para verificar el evento
                     if event.ui_element == boton_atras:
-                        is_running = False  # Cierra la ventana
+                        actualizar_contenido()
+                        MatchMaking.main(pj_id)
                     elif event.ui_element == boton_nuevo_mazo:
+                        actualizar_contenido()
                         NuevoMazo.nuevo_mazo(event, pj_id)
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # 1 es el botón izquierdo del ratón
                 mouse_pos = pygame.mouse.get_pos()
