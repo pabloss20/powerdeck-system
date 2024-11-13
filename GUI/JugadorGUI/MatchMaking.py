@@ -176,7 +176,6 @@ def main(id_jugador, mazo_seleccionado=None):
                             try:
                                 threading.Thread(target=buscar_partida_thread, args=(id_jugador,), daemon=True).start()
                             except Exception as e:
-                                print(f"Error al conectar: {e}")
                                 buscando_partida = False  # Reinicia el estado en caso de error
 
         ventana.fill(NEGRO)

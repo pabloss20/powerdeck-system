@@ -124,7 +124,6 @@ def iniciar_crear_mazo(pj_id):
 
         # Asocia la carta con su llave en el diccionario
         cartas_ui[carta_imagen] = carta["llave"]
-        print(f"Asociando carta con llave: {carta['llave']}")  # Para verificar la asociación
     def actualizar_contenido():
         # Eliminar contenido existente
         for element in contenedor_cartas.get_container().elements:
@@ -145,9 +144,7 @@ def iniciar_crear_mazo(pj_id):
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    print("Evento de botón presionado:", event.ui_element)
                     if event.ui_element.text in nombres_mazos:
-                        print(event.ui_element.text)
                         mazo_seleccionado = event.ui_element.text
                     if event.ui_element == boton_atras:
                         actualizar_contenido()
