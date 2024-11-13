@@ -58,5 +58,29 @@
         "max_cartas": 2,
         "keyid": "D-MFJnK1CJekjT",
         "jugador": "U-ySOghpOH3ykv-A-NUcWpD5NeGpt"
+    },
+    {
+        "nombre": "PrimerMazo",
+        "fecha_creacion": "2024-11-13T13:55:34.115474",
+        "fecha_modificacion": "2024-11-13T13:55:34.115474",
+        "cartas": [
+            "C-3uP4yfmA14Ld-V-rHj8ontjBLim",
+            "C-N0UOL2OWFggq-V-MmwzGekyk7vy"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-ubBEj2mNgHJK",
+        "jugador": "U-7mVciUEZGONA-A-PaFhQWRYa7cm"
+    },
+    {
+        "nombre": "Prime",
+        "fecha_creacion": "2024-11-13T13:56:53.146365",
+        "fecha_modificacion": "2024-11-13T13:56:53.146365",
+        "cartas": [
+            "C-3uP4yfmA14Ld-V-rHj8ontjBLim",
+            "C-N0UOL2OWFggq-V-MmwzGekyk7vy"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-TeDPZspyLf9c",
+        "jugador": "U-7mVciUEZGONA-A-PaFhQWRYa7cm"
     }
 ]

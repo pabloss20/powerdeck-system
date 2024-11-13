@@ -305,7 +305,7 @@ def main():
             return False
         return True
 
-    # Variable para almacenar el texto real de la contraseña
+    #Variable para almacenar el texto real de la contraseña
     texto_real_contrasena = ""
     texto_real_confirmar_contrasena = ""
     # Bucle principal
