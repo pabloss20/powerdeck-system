@@ -204,6 +204,7 @@ def nuevo_mazo(event, pj_id):
             element.hide()
         boton_atras.hide()
         boton_listo.hide()
+        input_nombre_mazo.hide()
 
     # Loop principal
     clock = pygame.time.Clock()
