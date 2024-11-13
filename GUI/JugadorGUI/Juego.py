@@ -329,7 +329,7 @@ def main():
                                 texto_real_contrasena = texto_real_contrasena[
                                                         :-1]  # Eliminar el último carácter si se borró
                             # Mostrar solo asteriscos en el campo
-                            text_inputs[key].set_text('*' * len(texto_real_contrasena))
+                            text_inputs_login[key].set_text('*' * len(texto_real_contrasena))
 
                 for key in text_inputs:
                     if evento.ui_element == text_inputs[key]:
