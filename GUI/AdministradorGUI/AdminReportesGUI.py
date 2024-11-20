@@ -23,6 +23,7 @@ def iniciar_reportes_gui():
     fuente_texto = pygame.font.Font(None, 50)
 
     pantalla_actual = "principal"
+
     campos_texto = {
         "nombre": "",
         "apellido": "",
