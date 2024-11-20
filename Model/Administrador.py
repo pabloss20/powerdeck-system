@@ -17,7 +17,21 @@ class Administrador(Usuario):
         self.id = generar_llave("U", "R")
 
         self.jsonhandler = JsonHandler('../../Files/usuarios.json')
-        self.registrar_usuario()
+
+        contrasena_base64 = self.encriptar_contrasena()
+
+        self.registrar_usuario
+        (
+        {
+            "id": self.id,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "correo": self.correo,
+            "contrasena": contrasena_base64,
+            "tipo_usuario": "administrador",
+            "rol_administrador": self.rol_administrador
+        }
+        )
 
     def validar_datos(self, nombre, apellido, correo, contrasena):
         if not all([nombre, apellido, correo, contrasena]):
@@ -35,28 +49,3 @@ class Administrador(Usuario):
 
         if not any(char.isalpha() for char in contrasena):
             raise ValueError("La contraseña debe incluir al menos una letra.")
-
-    def registrar_usuario(self):
-
-        # Verificar si el servidor está disponible antes de registrar
-        if not self.verificar_servidor():
-            raise ValueError("No se puede registrar el administrador. El servidor no está disponible.")
-
-        contrasena_encriptada = encriptar(self.contrasena)
-
-        # Se convierte bytes a base64
-        contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
-
-        info_administrador = {
-            "id": self.id,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
-            "correo": self.correo,
-            "contrasena": contrasena_base64,
-            "tipo_usuario": "administrador",
-            "rol_administrador": self.rol_administrador
-        }
-        try:
-            self.jsonhandler.agregar_info(info_administrador)
-        except ValueError as e:
-            raise e

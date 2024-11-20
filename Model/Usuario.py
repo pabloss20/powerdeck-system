@@ -1,5 +1,6 @@
 from Model.GestorHash import verificar
 from Model.JsonHandler import JsonHandler
+from Model.GestorHash import encriptar
 import base64
 import socket
 import json
@@ -13,8 +14,19 @@ class Usuario:
         self.correo = correo
         self.contrasena = contrasena
 
-    def registrar_usuario(self):
-        raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
+    def encriptar_contrasena(self):
+        contrasena_encriptada = encriptar(self.contrasena)
+        return base64.b64encode(contrasena_encriptada).decode('utf-8')
+
+    def registrar_usuario(self, datos_usuario):
+
+        if not self.verificar_servidor():
+            raise ValueError("No se puede registrar el usuario. El servidor no está disponible.")
+        
+        try:
+            self.jsonhandler.agregar_info(datos_usuario)
+        except ValueError as e:
+            raise e
 
     def validar_usuario(self):
         raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
