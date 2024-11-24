@@ -51,7 +51,7 @@
         "fecha_modificacion": "2024-11-05T17:52:50.471366",
         "raza": "Humano",
         "imagen": "../../Cartas\\carta16.png",
-        "tipo_carta": "Normal",
+        "tipo_carta": "Basica",
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 21,

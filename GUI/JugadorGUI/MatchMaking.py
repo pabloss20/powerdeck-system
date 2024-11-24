@@ -1,11 +1,15 @@
 import pygame
 import sys
+import os
 import pygame_gui
 from Model.Cliente import Cliente
 import threading
 import CrearMazo
 import time
 import math  # Importamos el módulo math
+from Model.JsonHandler import JsonHandler
+
+jsonhandler = JsonHandler('../../Files/usuarios.json')
 
 buscando_partida = False
 oponente_id = ""
@@ -44,14 +48,67 @@ def main(id_jugador, mazo_seleccionado=None):
     buscando_partida = False  # Para saber si estamos esperando una respuesta
     mensaje = None  # Almacena el mensaje de respuesta
 
-    # Función para mostrar la pantalla de "Rival encontrado"
-    def pantalla_rival_encontrado(ventana, oponente_id):
+    def obtener_cartas(identificador):
+        """
+        Obtiene las cartas del mazo de un jugador dado su identificador (ID).
+        Esta función usa 'jsonhandler.obtener_mazo_de_jugador' para obtener el mazo.
+        """
+        return jsonhandler.obtener_cartas_de_jugador(identificador)  # Suponiendo que devuelve un listado de cartas
+
+    def pantalla_rival_encontrado(ventana, jugador_id, oponente_id):
+        """
+        Muestra la pantalla cuando se encuentra un oponente, incluyendo las cartas de ambos jugadores.
+        """
         ventana.fill(NEGRO)  # Limpiar la pantalla
-        texto = f"¡Rival encontrado! Jugador: {oponente_id}"
-        renderizado_texto = fuente_texto.render(texto, True, BLANCO)
-        rect_texto = renderizado_texto.get_rect(center=(ANCHO // 2, ALTO // 2))
-        ventana.blit(renderizado_texto, rect_texto)
+
+        # Obtener las cartas de los jugadores (ahora obtenemos el mazo)
+        cartas_jugador = obtener_cartas(jugador_id)  # Obtener las cartas del mazo del jugador actual
+        cartas_oponente = obtener_cartas(oponente_id)  # Obtener las cartas del mazo del oponente
+
+        # Mostrar el ID del jugador en la parte inferior
+        texto_jugador = f"Jugador: {jugador_id}"
+        renderizado_jugador = fuente_texto.render(texto_jugador, True, BLANCO)
+        ventana.blit(renderizado_jugador, (150, ALTO - 50))
+
+        # Mostrar el ID del oponente en la parte superior
+        texto_oponente = f"Oponente: {oponente_id}"
+        renderizado_oponente = fuente_texto.render(texto_oponente, True, BLANCO)
+        ventana.blit(renderizado_oponente, (150, 20))
+
+        # Dibujar las cartas del jugador
+        dibujar_cartas(cartas_jugador, jugador_id, ventana, 150, ALTO // 2)
+
+        # Dibujar las cartas del oponente (ocultas)
+        dibujar_cartas(cartas_oponente, oponente_id, ventana, 150, ALTO // 4, ocultar=True)
+
         pygame.display.update()
+
+    def dibujar_cartas(cartas, id_jugador, ventana, x_inicial, y_inicial, ocultar=False):
+        """
+        Función para dibujar las cartas de un jugador (ocultando si es necesario).
+        """
+        espaciado = 120  # Espaciado entre cartas
+        tamaño_carta_jugador = (100, 150)  # Tamaño deseado para las cartas del jugador
+        tamaño_carta_oculta = (80, 120)  # Tamaño deseado para las cartas ocultas
+
+        for i, carta in enumerate(cartas):
+            # Si la carta es del oponente y se debe ocultar
+            if ocultar:
+                # Dibuja un rectángulo gris para la carta oculta
+                pygame.draw.rect(ventana, (150, 150, 150),  # Color gris para indicar que está oculta
+                                 (x_inicial + i * espaciado, y_inicial, tamaño_carta_oculta[0], tamaño_carta_oculta[1]))
+
+                texto_oculta = fuente_texto.render("", True, (255, 255, 255))
+                ventana.blit(texto_oculta, (x_inicial + i * espaciado + 10, y_inicial + 10))
+            else:
+                # Mostrar la carta del jugador redimensionada
+                imagen_carta = pygame.image.load(carta["imagen"])
+                imagen_carta = pygame.transform.scale(imagen_carta,
+                                                      tamaño_carta_jugador)  # Redimensionar a tamaño del jugador
+                ventana.blit(imagen_carta, (x_inicial + i * espaciado, y_inicial))
+
+                texto_carta = fuente_texto.render("", True, BLANCO)
+                ventana.blit(texto_carta, (x_inicial + i * espaciado + 10, y_inicial + 10))
 
     # Función para mostrar el círculo giratorio y el temporizador
     def mostrar_animacion_giratoria(ventana, tiempo_transcurrido, tiempo_restante):
@@ -121,6 +178,7 @@ def main(id_jugador, mazo_seleccionado=None):
             print(f"¡Partida encontrada! Oponente ID: {cliente.respuesta_partida.get('oponente_id')}")
             oponente_id = cliente.respuesta_partida.get('oponente_id')
             pantalla_actual = "rival_encontrado"
+
     def mostrar_dialogo(mensaje, ventana):
         # Fondo del diálogo
         cuadro_dialogo = pygame.Surface((400, 200))
@@ -212,7 +270,7 @@ def main(id_jugador, mazo_seleccionado=None):
         if pantalla_actual == "principal":
             pantalla_principal()
         elif pantalla_actual == "rival_encontrado":
-            pantalla_rival_encontrado(ventana, oponente_id)
+            pantalla_rival_encontrado(ventana, id_jugador, oponente_id)
 
         pygame.display.update()
         manager.draw_ui(window_surface)

@@ -82,5 +82,29 @@
         "max_cartas": 2,
         "keyid": "D-TeDPZspyLf9c",
         "jugador": "U-7mVciUEZGONA-A-PaFhQWRYa7cm"
+    },
+    {
+        "nombre": "macito",
+        "fecha_creacion": "2024-11-23T17:16:07.438087",
+        "fecha_modificacion": "2024-11-23T17:16:07.438087",
+        "cartas": [
+            "C-jtTwCbHBAbL6-V-fQDPjB2Rszc0",
+            "C-rvLxiSLSnbBi-V-T0w1Bq0uvaBi"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-rRC6SzxrLIlC",
+        "jugador": "U-8Gtdgf82Ihl3-A-bjduXqPbjBmS"
+    },
+    {
+        "nombre": "Nombre del Mazo",
+        "fecha_creacion": "2024-11-24T10:45:56.631390",
+        "fecha_modificacion": "2024-11-24T10:45:56.631390",
+        "cartas": [
+            "C-JMLYtOkfX7GL-V-UHH654ss4ObZ",
+            "C-k6gCsHfAP0OY-V-RWdtSmNKE1dX"
+        ],
+        "max_cartas": 2,
+        "keyid": "D-SdWqMdQHfU59",
+        "jugador": "U-aV9Llaal0M7K-A-foJkmKf1H6AK"
     }
 ]

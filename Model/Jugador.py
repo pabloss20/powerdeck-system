@@ -3,7 +3,7 @@ import random
 from datetime import datetime
 from Model.JsonHandler import JsonHandler
 from Model.GeneradorLlave import generar_llave
-
+from Model.GestorHash import encriptar
 import re
 from enum import Enum
 
@@ -42,14 +42,12 @@ class Jugador(Usuario):
         self.estado = EstadoJugador.INACTIVO
         self.pais = pais
 
-        # Inicializar JsonHandler aquí
-        self.jsonhandler = JsonHandler('../../Files/usuarios.json')
+        contrasena_encriptada = encriptar(self.contrasena)
 
-        contrasena_base64 = self.encriptar_contrasena();
+        # Se convierte bytes a base64
+        contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
 
-        self.registrar_usuario
-        (
-        {
+        datos_usuario = {
             "id": self.id,
             "nombre_usuario": self.nombre_usuario,
             "nombre": self.nombre,
@@ -61,7 +59,7 @@ class Jugador(Usuario):
             "cartas": self.cartas,
             "tipo_usuario": "jugador"
         }
-        )
+        self.registrar_usuario(datos_usuario)
 
     def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais):
         if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais]):
