@@ -90,7 +90,7 @@ class Jugador(Usuario):
             raise ValueError("El nuevo estado debe ser una instancia de EstadoJugador.")
 
     # Método para seleccionar cartas basado en las probabilidades definidas
-    def seleccionar_cartas(self, cantidad = 3, archivo_json='../../Files/cartas.json'):
+    def seleccionar_cartas(self, cantidad = 10, archivo_json='../../Files/cartas.json'):
         # Cargar las cartas desde el archivo JSON
         json_handler = JsonHandler(archivo_json)
         cartas = json_handler.cargar_cartas()
