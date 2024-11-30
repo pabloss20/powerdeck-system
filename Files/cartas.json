@@ -407,7 +407,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 2,
-        "bonus_poder": 2,
+        "bonus_poder": 80,
         "atributos": {
             "poder": 1,
             "velocidad": 1,

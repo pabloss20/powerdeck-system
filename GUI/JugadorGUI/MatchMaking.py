@@ -13,12 +13,14 @@ from multiprocessing import Process
 jsonhandler = JsonHandler('../../Files/usuarios.json')
 
 buscando_partida = False
+selecciono_carta = False
 oponente_id = ""
 cartas_jugador = []
 cartas_oponente = []
 pantalla_actual = ""
 mazo_rival = ""
 carta_rival = ""
+carta_seleccionada = ""
 puntos_rival = 0
 puntos = 0
 dialogo_exito = None  # Variable global para el diálogo
@@ -26,7 +28,7 @@ mostrando_botones = True  # Variable para controlar si se muestran los botones'
 turno_actual = ""
 
 def main(id_jugador, mazo_seleccionado=None):
-    global buscando_partida, oponente_id, pantalla_actual, dialogo_exito, mostrando_botones, mazo_rival, turno_actual, carta_rival
+    global buscando_partida, oponente_id, pantalla_actual, dialogo_exito, mostrando_botones, mazo_rival, turno_actual, carta_rival, selecciono_carta, carta_seleccionada
 
     # Inicializar pygame
     pygame.init()
@@ -54,6 +56,7 @@ def main(id_jugador, mazo_seleccionado=None):
 
     # Variables para controlar el estado de la animación y el juego
     buscando_partida = False  # Para saber si estamos esperando una respuesta
+    selecciono_carta = False
     mensaje = None  # Almacena el mensaje de respuesta
 
     def obtener_cartas(idmazo ,identificador):
@@ -107,6 +110,7 @@ def main(id_jugador, mazo_seleccionado=None):
             return 3
     def dibujar_cartas(cartas, id_jugador, ventana, x_inicial, y_inicial, ocultar=False):
         hitboxes_cartas = []
+        fuente_texto = pygame.font.Font(None, 36)  # Ajusta el tamaño según lo necesario
 
         espaciado = 120  # Espaciado entre cartas
         tamaño_carta_jugador = (100, 150)  # Tamaño deseado para las cartas del jugador
@@ -124,6 +128,9 @@ def main(id_jugador, mazo_seleccionado=None):
                 imagen_carta = pygame.image.load(carta["imagen"])
                 imagen_carta = pygame.transform.scale(imagen_carta, tamaño_carta_jugador)
                 ventana.blit(imagen_carta, (x, y))
+                puntosR = f" {carta["bonus_poder"]}"
+                renderizado_turno = fuente_texto.render(puntosR, True, BLANCO)
+                ventana.blit(renderizado_turno, (x, y + 170))
 
                 # Guardar la hitbox de la carta actual
                 hitboxes_cartas.append({"rect": pygame.Rect(x, y, tamaño_carta_jugador[0], tamaño_carta_jugador[1]),
@@ -176,6 +183,31 @@ def main(id_jugador, mazo_seleccionado=None):
 
             dibujar_boton(fuente_texto.render('Buscar Partida', True, BLANCO),
                           ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO, ventana)
+    def cargar_cartas_Select(carta1, carta2,ventana):
+        fuente_texto = pygame.font.Font(None, 36)  # Ajusta el tamaño según lo necesario
+        x1 = 1200
+        y1 = ALTO // 4 + 200
+        x2 = 1200
+        y2 = ALTO // 4 - 200
+
+        tamaño_carta_jugador = (200, 300)  # Tamaño deseado para las cartas del jugador
+
+        # Mostrar la carta del jugador redimensionada
+        imagen_carta = pygame.image.load(carta1["imagen"])
+        imagen_carta = pygame.transform.scale(imagen_carta, tamaño_carta_jugador)
+        ventana.blit(imagen_carta, (x1, y1))
+        puntosR = f" {carta1["bonus_poder"]}"
+        renderizado_turno = fuente_texto.render(puntosR, True, BLANCO)
+        ventana.blit(renderizado_turno, (x1, y1 + 310))
+
+        # Mostrar la carta del jugador redimensionada
+        imagen_carta2 = pygame.image.load(carta2["imagen"])
+        imagen_carta2 = pygame.transform.scale(imagen_carta2, tamaño_carta_jugador)
+        ventana.blit(imagen_carta2, (x2, y2))
+        puntosA = f" {carta2["bonus_poder"]}"
+        renderizado_turno2 = fuente_texto.render(puntosA, True, BLANCO)
+        ventana.blit(renderizado_turno2, (x2, y2 + 310))
+
 
     # Llamada desde el bucle principal
     def buscar_partida_thread(id_jugador, n_mazo):
@@ -202,7 +234,7 @@ def main(id_jugador, mazo_seleccionado=None):
 
     # Llamada desde el bucle principal
     def cartavs(id_jugador, n_carta):
-        global pantalla_actual, oponente_id, carta_rival, puntos_rival, puntos
+        global pantalla_actual, oponente_id, carta_rival, puntos_rival, puntos, selecciono_carta
         cliente = Cliente()
         cliente.conectar()
         cliente.seleccionar_carta(id_jugador, n_carta)
@@ -214,6 +246,7 @@ def main(id_jugador, mazo_seleccionado=None):
             print(f"¡Evaluando ganador! Oponente ID: {cliente.respuesta_partida.get('oponente_id')} vs {id_jugador}")
             oponente_id = cliente.respuesta_partida.get('oponente_id')
             carta_rival = cliente.respuesta_partida.get('carta_rival')
+            selecciono_carta = True
             res = determinar_ganador(n_carta, carta_rival)
             if res == 1:
                 puntos += 1
@@ -221,6 +254,7 @@ def main(id_jugador, mazo_seleccionado=None):
                 puntos_rival += 1
             elif res == 3:
                 pass
+            return carta_rival
 
     def mostrar_dialogo(mensaje, ventana):
         # Fondo del diálogo
@@ -306,7 +340,7 @@ def main(id_jugador, mazo_seleccionado=None):
                         if hitbox["rect"].collidepoint(mouse_pos):
                             carta_seleccionada = hitbox["carta"]
                             print(f"Carta seleccionada: {carta_seleccionada}")
-                            threading.Thread(target= cartavs, args=(id_jugador, carta_seleccionada), daemon=True).start()
+                            carta_rival = threading.Thread(target= cartavs, args=(id_jugador, carta_seleccionada,), daemon=True).start()
 
         ventana.fill(NEGRO)
 
@@ -323,7 +357,9 @@ def main(id_jugador, mazo_seleccionado=None):
             pantalla_principal()
         elif pantalla_actual == "rival_encontrado":
             hitboxes_cartas = pantalla_rival_encontrado(ventana,  jugador_id= id_jugador,oponente_id= oponente_id,mazo_id = mazo_seleccionado, mazo_rival=mazo_rival)
-
+            if not carta_seleccionada == "":
+                if not carta_rival is None:
+                    cargar_cartas_Select(carta_seleccionada, carta_rival, ventana)
         pygame.display.update()
         manager.draw_ui(window_surface)
         manager.update(time_delta)
