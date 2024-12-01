@@ -4,7 +4,6 @@ import base64
 import socket
 import json
 
-IP = "13.59.218.37"
 class Usuario:
 
     def __init__(self, nombre, apellido, correo, contrasena):
@@ -13,16 +12,22 @@ class Usuario:
         self.correo = correo
         self.contrasena = contrasena
 
-    def registrar_usuario(self):
-        raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
+        self.jsonHandler = JsonHandler("../../Files/usuarios.json")
 
-    def validar_usuario(self):
-        raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
+    def registrar_usuario(self, datos_usuario):
+
+        if not self.verificar_servidor():
+            raise ValueError("No se puede registrar el usuario. El servidor no está disponible.")
+
+        try:
+            self.jsonHandler.agregar_info(datos_usuario)
+        except ValueError as e:
+            raise e
 
     def validar_datos(self):
         raise NotImplementedError("Este método debe ser sobrescrito en las subclases.")
 
-    def conectar_servidor(self, host=IP, puerto=12345):
+    def conectar_servidor(self, host='127.0.0.1', puerto=54321):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conexion:
                 conexion.connect((host, puerto))
@@ -96,4 +101,3 @@ class Usuario:
                 raise ValueError("Servidor no iniciado o sistema caido. Inténtalo más tarde.")
         else:
             return "Contraseña incorrecta"
-

@@ -31,6 +31,9 @@ def main():
     # Fuentes
     fuente_texto = pygame.font.Font(None, 50)
 
+    # Lista de países de la ONU (solo algunos como ejemplo)
+    paises_onu = ["Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Australia", "Costa Rica"]
+
     # Variables de estado
     pantalla_actual = "principal"
     campos_texto = {
@@ -39,8 +42,7 @@ def main():
         "correo": "",
         "contrasena": "",
         "confirmar_contrasena": "",
-        "usuario": "",
-        "pais" : ""
+        "usuario": ""
     }
 
     campos_texto_login = {
@@ -78,11 +80,18 @@ def main():
                                                           object_id=ObjectID(class_id='@campoTXT', object_id="input4")),
         "usuario": pygame_gui.elements.UITextEntryLine(
             relative_rect=pygame.Rect(860, 400, 350, 42), manager=manager,
-            object_id=ObjectID(class_id='@campoTXT', object_id="input5")),
-        "pais": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860,450, 350, 42),
-                                                    manager=manager,
-                                                    object_id=ObjectID(class_id='@campoTXT', object_id="input6"))
+            object_id=ObjectID(class_id='@campoTXT', object_id="input5"))
     }
+
+    # Agregar el UIDropDownMenu para seleccionar el país
+    dropdown_pais = pygame_gui.elements.UIDropDownMenu(
+        options_list=["Australia", "Costa Rica"],  # Lista de países de la ONU
+        starting_option="Australia",  # Opción predeterminada
+        relative_rect=pygame.Rect(860, 450, 350, 42),
+        manager=manager,
+        object_id=ObjectID(class_id='@dropdown', object_id="dropdown_pais")
+    )
+    dropdown_pais.hide()  # Inicialmente oculto
 
     # Variables para mostrar/ocultar campos de texto
     for text_input in text_inputs.values():
@@ -119,10 +128,13 @@ def main():
                 # Variables para mostrar/ocultar campos de texto
                 for text_input in text_inputs.values():
                     text_input.show()
+                dropdown_pais.show()
+
             else:
                 # Variables para mostrar/ocultar campos de texto
                 for text_input in text_inputs.values():
                     text_input.hide()
+                dropdown_pais.hide()
 
     # Función para activar o desactivar los inputboxes según la pantalla
     def cambiar_visibilidad_inputboxes_login(pantalla):
@@ -145,6 +157,8 @@ def main():
 
         for text_input in text_inputs.values():
             text_input.show()
+
+        dropdown_pais.show()
 
         # Dibujar botones
         dibujar_boton(fuente_texto.render('Confirmar Registro', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 100,
@@ -233,9 +247,11 @@ def main():
                 "correo": text_inputs["correo"].get_text(),
                 "contrasena": contra,
                 "confirmar_contrasena": confirmar,
-                "pais": text_inputs["pais"].get_text(),
                 "nombre_usuario": text_inputs["usuario"].get_text()
             }
+
+            pais_seleccionado = dropdown_pais.selected_option[0]  # Solo toma el primer valor de la tupla
+
             # Crear una instancia de la clase Mazo con el nombre proporcionado
             nuevo_jugador = Jugador(
                 nombre = text_input["nombre"],
@@ -243,9 +259,18 @@ def main():
                 correo = text_input["correo"],
                 contrasena= text_input["contrasena"],
                 confirmar_contrasena= text_input["confirmar_contrasena"],
-                pais= text_input["pais"],
+                pais= pais_seleccionado,
                 nombre_usuario= text_input["nombre_usuario"]
             )
+
+            # Limpiar campos de texto
+            for campo in campos_texto.keys():
+                campos_texto[campo] = ""  # Limpiar los valores del diccionario de campos de texto
+
+            # Limpiar las cajas de texto en la interfaz gráfica
+            for key, text_input in text_inputs.items():
+                text_input.set_text("")  # Limpiar cada input en la interfaz
+
             # Crear un cuadro de diálogo para mostrar el error al usuario
             pygame_gui.windows.UIConfirmationDialog(
                 rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),

@@ -1,9 +1,9 @@
 import socket
 import threading
 import json
-IP = '13.59.218.37'
+
 class Cliente:
-    def __init__(self, host=IP, puerto=12345):
+    def __init__(self, host="127.0.0.1", puerto=54321):
         self.host = host
         self.puerto = puerto
         self.cliente_socket = None

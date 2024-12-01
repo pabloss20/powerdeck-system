@@ -42,9 +42,24 @@ class Jugador(Usuario):
         self.estado = EstadoJugador.INACTIVO
         self.pais = pais
 
-        # Inicializar JsonHandler aquí
-        self.jsonhandler = JsonHandler('../../Files/usuarios.json')
-        self.registrar_usuario()
+        contrasena_encriptada = encriptar(self.contrasena)
+
+        # Se convierte bytes a base64
+        contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
+
+        datos_usuario = {
+            "id": self.id,
+            "nombre_usuario": self.nombre_usuario,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "correo": self.correo,
+            "contrasena": contrasena_base64,
+            "fecha_registro": self.fecha_registro,
+            "pais": self.pais,
+            "cartas": self.cartas,
+            "tipo_usuario": "jugador"
+        }
+        self.registrar_usuario(datos_usuario)
 
     def validar_datos(self, nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais):
         if not all([nombre, apellido, correo, contrasena, confirmar_contrasena, nombre_usuario, pais]):
@@ -65,33 +80,6 @@ class Jugador(Usuario):
 
         if not any(char.isalpha() for char in contrasena):
             raise ValueError("La contraseña debe incluir al menos una letra.")
-
-    def registrar_usuario(self):
-        # Verificar si el servidor está disponible antes de registrar
-        if not self.verificar_servidor():
-            raise ValueError("No se puede registrar el administrador. El servidor no está disponible.")
-
-        contrasena_encriptada = encriptar(self.contrasena)
-
-        # Se convierte bytes a base64
-        contrasena_base64 = base64.b64encode(contrasena_encriptada).decode('utf-8')
-
-        info_jugador = {
-            "id": self.id,
-            "nombre_usuario": self.nombre_usuario,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
-            "correo": self.correo,
-            "contrasena": contrasena_base64,
-            "fecha_registro": self.fecha_registro,
-            "pais": self.pais,
-            "cartas": self.cartas,
-            "tipo_usuario": "jugador"
-        }
-        try:
-            self.jsonhandler.agregar_info(info_jugador)
-        except ValueError as e:
-            raise e
 
     # Actualiza el estado del jugador durante el juego
     def actualizar_estado(self, estado: EstadoJugador):

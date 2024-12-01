@@ -23,6 +23,7 @@ def iniciar_reportes_gui():
     fuente_texto = pygame.font.Font(None, 50)
 
     pantalla_actual = "principal"
+
     campos_texto = {
         "nombre": "",
         "apellido": "",
@@ -113,6 +114,14 @@ def iniciar_reportes_gui():
                 contrasena=text_input["contrasena"],
                 rol_administrador=rol_seleccionado
             )
+
+            # Limpiar campos de texto
+            for campo in campos_texto.keys():
+                campos_texto[campo] = ""  # Limpiar los valores del diccionario de campos de texto
+
+            # Limpiar las cajas de texto en la interfaz gráfica
+            for key, text_input in text_inputs.items():
+                text_input.set_text("")  # Limpiar cada input en la interfaz
 
             pygame_gui.windows.UIConfirmationDialog(
                 rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),

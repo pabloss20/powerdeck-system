@@ -6,7 +6,7 @@ from Model.Jugador import Jugador
 from Model.Administrador import Administrador
 from Model.Usuario import Usuario
 import AdminReportesGUI
-import AdministradorGUI
+#import AdministradorGUI
 
 def main():
     pygame.init()
@@ -205,7 +205,8 @@ def main():
                             if Ingreso == 2:
                                 AdminReportesGUI.iniciar_reportes_gui()
                             elif Ingreso == 3:
-                                AdministradorGUI.main()
+                                #AdministradorGUI.main()
+                                pass
 
 
                         elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
