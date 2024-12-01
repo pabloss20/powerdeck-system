@@ -2,6 +2,11 @@ import pygame
 import sys
 from GUI.AdministradorGUI import CrearCarta
 import Galeria
+import pygame_gui
+from pygame_gui.core import ObjectID
+
+from Model.Administrador import Administrador
+
 
 def main():
     # Inicializar pygame
@@ -16,6 +21,7 @@ def main():
     ANCHO = 1820  # Cambiado a 1820
     ALTO = 900    # Cambiado a 900
 
+    manager = pygame_gui.UIManager((ANCHO, ALTO), '../../Files/text_entry_box.json')
     # Crear la ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO), pygame.RESIZABLE)
     pygame.display.set_caption('Power Deck App')
@@ -34,10 +40,10 @@ def main():
     }
 
     text_inputs = {
-        "nombre": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 150, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input1")),
-        "apellido": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 200, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input2")),
-        "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 250, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input3")),
-        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input4"))
+        "nombre": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 150, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input5")),
+        "apellido": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 200, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input6")),
+        "correo": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 250, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input7")),
+        "contrasena": pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(860, 300, 350, 42), manager=manager, object_id=ObjectID(class_id='@campoTXT', object_id="input8"))
     }
 
     # Ocultar los campos inicialmente
@@ -57,6 +63,7 @@ def main():
     def cambiar_visibilidad_inputboxes(pantalla):
         if pantalla == "registrar":
             for text_input in text_inputs.values():
+
                 text_input.show()
             dropdown_rol.show()
         else:
@@ -75,8 +82,8 @@ def main():
             ventana.blit(texto_campo, (ANCHO // 2 - 200, y_offset))
             y_offset += 50
 
-        dibujar_boton(fuente_texto.render('Confirmar Registro', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 100, 300, 100, AZUL_CLARO, NEGRO)
-        dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO_VENTANA // 2 + 250, 300, 100, AZUL_CLARO, NEGRO)
+        dibujar_boton(fuente_texto.render('Confirmar Registro', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 100, 300, 100, AZUL_CLARO, NEGRO,ventana)
+        dibujar_boton(fuente_texto.render('Regresar', True, BLANCO), ANCHO // 2 - 150, ALTO // 2 + 250, 300, 100, AZUL_CLARO, NEGRO, ventana)
 
 
     # Función para dibujar un botón
@@ -101,7 +108,7 @@ def main():
                       ANCHO // 2 - 150, ALTO // 2 + 50, 300, 100, AZUL_CLARO, NEGRO, ventana)
 
         dibujar_boton(fuente_texto.render('REGISTRAR ADMINISTRADOR', True, BLANCO),
-                      ANCHO // 2 - 150, ALTO // 2 + 125, 300, 100, AZUL_CLARO, NEGRO, ventana)
+                      ANCHO // 2 - 150, ALTO // 2 + 200, 300, 100, AZUL_CLARO, NEGRO, ventana)
 
 
     def btn_listo():
@@ -136,7 +143,7 @@ def main():
                 text_input.set_text("")  # Limpiar cada input en la interfaz
 
             pygame_gui.windows.UIConfirmationDialog(
-                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                rect=pygame.Rect((ALTO // 2, ANCHO // 2 - 600), (300, 100)),
                 manager=manager,
                 window_title="Exito!",
                 action_long_desc=str("Usuario creado con éxito"),
@@ -145,7 +152,7 @@ def main():
             )
         except ValueError as e:
             pygame_gui.windows.UIConfirmationDialog(
-                rect=pygame.Rect((ALTO_VENTANA // 2, ANCHO // 2 - 600), (300, 100)),
+                rect=pygame.Rect((ALTO // 2, ANCHO // 2 - 600), (300, 100)),
                 manager=manager,
                 window_title="Error",
                 action_long_desc=str(e),
@@ -153,12 +160,15 @@ def main():
                 blocking=True
             )
 
+    reloj = pygame.time.Clock()
     # Bucle principal
     while True:
+        time_delta = reloj.tick(60) / 1000.0
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            manager.process_events(evento)
 
             # Manejar eventos de la pantalla actual
             if pantalla_actual == "principal":
@@ -170,8 +180,9 @@ def main():
                     # Verificar si se ha hecho clic en el botón "Ver Álbum"
                     elif ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 50 <= mouse_pos[1] <= ALTO // 2 + 150:
                         pantalla_actual = "ver_album"  # Cambiar a la pantalla del álbum
-                    elif ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 125 <= mouse_pos[1] <= ALTO // 2 + 150:
+                    elif ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150 and ALTO // 2 + 200 <= mouse_pos[1] <= ALTO // 2 + 300:
                         pantalla_actual = "registrar"  # Cambiar a la pantalla a registro
+                        cambiar_visibilidad_inputboxes("registrar")
 
 
             elif pantalla_actual == "crear_carta":
@@ -179,12 +190,14 @@ def main():
             elif pantalla_actual == "ver_album":
                 Galeria.iniciar_galeria()  # Llamar a la función de galería desde el archivo correspondiente
             elif pantalla_actual == "registrar":
-                if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
-                    if ALTO_VENTANA // 2 + 100 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 200:
-                        btn_listo()
-                    elif ALTO_VENTANA // 2 + 250 <= mouse_pos[1] <= ALTO_VENTANA // 2 + 350:
-                        pantalla_actual = "principal"
-                        cambiar_visibilidad_inputboxes("principal")
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if ANCHO // 2 - 150 <= mouse_pos[0] <= ANCHO // 2 + 150:
+                        if ALTO // 2 + 100 <= mouse_pos[1] <= ALTO // 2 + 200:
+                            btn_listo()
+                        elif ALTO // 2 + 250 <= mouse_pos[1] <= ALTO // 2 + 350:
+                            pantalla_actual = "principal"
+                            cambiar_visibilidad_inputboxes("principal")
 
         # Rellenar la pantalla de negro
         ventana.fill(NEGRO)
@@ -201,6 +214,8 @@ def main():
             pantalla_registrar()
 
         # Actualizar la pantalla
+        manager.update(time_delta)
+        manager.draw_ui(ventana)
         pygame.display.update()
 
 if __name__ == "__main__":

@@ -71,6 +71,24 @@
             "contrasena": "JDJiJDEyJHBwcmtTOHBoUHZ0c3RaQk9VMmRtVmUybjYxaERwVVVFTEQyWnp5dFYycWh0Q2F2SDQ3Tmsy",
             "tipo_usuario": "administrador",
             "rol_administrador": "reportes"
+        },
+        {
+            "id": "U-3xOrWxGaGTHD-R-qLJYRjBsfzxc",
+            "nombre": "Jose",
+            "apellido": "Fernando",
+            "correo": "jos@gmail.com",
+            "contrasena": "JDJiJDEyJHZNNUo2dEFqbGl6SHFLczVsOTFCOS45U2FMT013a3oyd0VFNHJqcXhVUEpYUUlsd3FRTjFH",
+            "tipo_usuario": "administrador",
+            "rol_administrador": "juego"
+        },
+        {
+            "id": "U-AEMIaBnjy2kW-R-2fDN94uqFurK",
+            "nombre": "Nonono",
+            "apellido": "Terrible",
+            "correo": "solucionado@gmail.com",
+            "contrasena": "JDJiJDEyJE1kY3VTN0RFeHF4T29wSURvaFR5Zi45S2M2RENnRTVqSzdYUFJzd000RC5BSGdWY0NmNVpp",
+            "tipo_usuario": "administrador",
+            "rol_administrador": "juego"
         }
     ],
     "jugadores": [
