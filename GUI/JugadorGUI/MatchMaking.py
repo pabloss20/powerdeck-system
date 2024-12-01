@@ -9,6 +9,7 @@ import time
 import math  # Importamos el módulo math
 from Model.JsonHandler import JsonHandler
 from multiprocessing import Process
+import random
 
 jsonhandler = JsonHandler('../../Files/usuarios.json')
 
@@ -21,14 +22,18 @@ pantalla_actual = ""
 mazo_rival = ""
 carta_rival = ""
 carta_seleccionada = ""
+shuffle = False
 puntos_rival = 0
 puntos = 0
 dialogo_exito = None  # Variable global para el diálogo
 mostrando_botones = True  # Variable para controlar si se muestran los botones'
-turno_actual = ""
-
+turno_actual = 0
+cartas_seleccionadas = []
+cartas_no_seleccionadas = []
+hitbox = []
+cartas_listas = False
 def main(id_jugador, mazo_seleccionado=None):
-    global buscando_partida, oponente_id, pantalla_actual, dialogo_exito, mostrando_botones, mazo_rival, turno_actual, carta_rival, selecciono_carta, carta_seleccionada
+    global buscando_partida, oponente_id, pantalla_actual, dialogo_exito, mostrando_botones, mazo_rival, turno_actual, carta_rival, selecciono_carta, carta_seleccionada, shuffle, puntos, puntos_rival, cartas_listas
 
     # Inicializar pygame
     pygame.init()
@@ -52,7 +57,13 @@ def main(id_jugador, mazo_seleccionado=None):
     fuente_texto = pygame.font.Font(None, 50)
 
     # Variables de estado
+    shuffle = False
     pantalla_actual = "principal"
+    turno_actual = 0
+    puntos_rival = 0
+    puntos = 0
+    cartas_listas = False
+
 
     # Variables para controlar el estado de la animación y el juego
     buscando_partida = False  # Para saber si estamos esperando una respuesta
@@ -67,7 +78,7 @@ def main(id_jugador, mazo_seleccionado=None):
         return jsonhandler.obtener_cartas_de_mazo(idmazo,identificador)  # Suponiendo que devuelve un listado de cartas
 
     def pantalla_rival_encontrado(ventana, jugador_id, oponente_id, mazo_id, mazo_rival, AMARILLO=(255, 255, 0)):
-        global cartas_jugador, turno_actual, cartas_oponente, puntos_rival, puntos
+        global cartas_jugador, turno_actual, cartas_oponente, puntos_rival, puntos, shuffle, cartas_seleccionadas, cartas_no_seleccionadas, hitbox, carta_seleccionada, cartas_listas
         fuente_texto = pygame.font.Font(None, 36)  # Ajusta el tamaño según lo necesario
 
         """
@@ -78,6 +89,11 @@ def main(id_jugador, mazo_seleccionado=None):
         cartas_jugador = obtener_cartas(mazo_id, jugador_id)
         cartas_oponente = obtener_cartas(mazo_rival, oponente_id)
 
+        # Selecciona 3 cartas aleatorias
+        if len(cartas_jugador) >= 3 and not shuffle:
+            cartas_seleccionadas = random.sample(cartas_jugador, 3)
+            shuffle = True
+            cartas_no_seleccionadas = [carta for carta in cartas_jugador if carta not in cartas_seleccionadas]
         # Mostrar IDs y estado del turno
         texto_jugador = f"Jugador: {jugador_id}"
         renderizado_jugador = fuente_texto.render(texto_jugador, True, BLANCO)
@@ -95,12 +111,61 @@ def main(id_jugador, mazo_seleccionado=None):
         renderizado_p = fuente_texto.render(puntosA, True, AMARILLO)
         ventana.blit(renderizado_p, (ANCHO // 2 - 100, ALTO - 50))
 
+        dibujar_cartas(cartas_seleccionadas, oponente_id, ventana, 250, ALTO // 4, ocultar=True)
 
         # Dibujar cartas y obtener sus áreas
-        hitbox = dibujar_cartas(cartas_jugador, jugador_id, ventana, 250, ALTO // 2)
-        dibujar_cartas(cartas_oponente, oponente_id, ventana, 250, ALTO // 4, ocultar=True)
+        if turno_actual == 1 and len(cartas_no_seleccionadas) >= 2 and not cartas_listas:
+            cartas_seleccionadas.append(cartas_no_seleccionadas.pop(0))
+        elif turno_actual == 2 and len(cartas_no_seleccionadas) >= 1 and not cartas_listas:
+            cartas_seleccionadas.append(cartas_no_seleccionadas.pop(0))
+        if carta_seleccionada in cartas_seleccionadas and not cartas_listas:
+            cartas_seleccionadas.remove(carta_seleccionada)
+        hitbox = dibujar_cartas(cartas_seleccionadas, oponente_id, ventana, 250, ALTO // 2)
+        if cartas_seleccionadas == [] or turno_actual >= 5 and not cartas_listas:
+            carta_seleccionada = ""
+            pantalla_final(ventana, puntos, puntos_rival)
 
         return hitbox
+
+    def pantalla_final(ventana, puntos, puntos_rival, BLANCO=(255, 255, 255), NEGRO=(0, 0, 0), ROJO=(255, 0, 0)):
+        global pantalla_actual
+        pantalla_actual = "final"
+        """
+        Pantalla final que muestra al ganador y un botón para finalizar.
+        """
+        # Limpiar la pantalla y definir fuente
+        ventana.fill(NEGRO)
+        fuente_titulo = pygame.font.Font(None, 80)  # Fuente grande para el título
+        fuente_texto = pygame.font.Font(None, 50)  # Fuente para otros textos
+
+        # Determinar ganador
+        if puntos > puntos_rival:
+            texto_ganador = "¡Ganaste!"
+            color_ganador = BLANCO
+        elif puntos < puntos_rival:
+            texto_ganador = "¡Perdiste!"
+            color_ganador = ROJO
+        else:
+            texto_ganador = "¡Empate!"
+            color_ganador = BLANCO
+
+        # Renderizar texto del ganador
+        renderizado_titulo = fuente_titulo.render(texto_ganador, True, color_ganador)
+        ventana.blit(renderizado_titulo, (ANCHO // 2 - renderizado_titulo.get_width() // 2, ALTO // 3))
+
+        # Mostrar puntos
+        texto_puntos = f"Tus puntos: {puntos} - Puntos rival: {puntos_rival}"
+        renderizado_puntos = fuente_texto.render(texto_puntos, True, BLANCO)
+        ventana.blit(renderizado_puntos, (ANCHO // 2 - renderizado_puntos.get_width() // 2, ALTO // 2))
+
+        # Dibujar botón "Finalizar"
+        boton_rect = pygame.Rect(ANCHO // 2 - 100, ALTO - 150, 200, 50)  # Posición y tamaño del botón
+        pygame.draw.rect(ventana, BLANCO, boton_rect)
+        texto_boton = fuente_texto.render("Finalizar", True, NEGRO)
+        ventana.blit(texto_boton, (boton_rect.x + 30, boton_rect.y + 10))
+
+        pygame.display.flip()  # Actualizar pantalla
+
     def determinar_ganador(carta, cartaR):
         if carta["bonus_poder"] > cartaR["bonus_poder"]:
             return 1
@@ -114,7 +179,7 @@ def main(id_jugador, mazo_seleccionado=None):
 
         espaciado = 120  # Espaciado entre cartas
         tamaño_carta_jugador = (100, 150)  # Tamaño deseado para las cartas del jugador
-        tamaño_carta_oculta = (80, 120)  # Tamaño deseado para las cartas ocultas
+        tamaño_carta_oculta = (100, 150)  # Tamaño deseado para las cartas ocultas
 
         for i, carta in enumerate(cartas):
             x = x_inicial + i * espaciado
@@ -234,26 +299,25 @@ def main(id_jugador, mazo_seleccionado=None):
 
     # Llamada desde el bucle principal
     def cartavs(id_jugador, n_carta):
-        global pantalla_actual, oponente_id, carta_rival, puntos_rival, puntos, selecciono_carta
+        global pantalla_actual, oponente_id, carta_rival, puntos_rival, puntos, selecciono_carta, turno_actual, cartas_listas
         cliente = Cliente()
         cliente.conectar()
         cliente.seleccionar_carta(id_jugador, n_carta)
         while cliente.respuesta_partida is None:  # Esperamos la respuesta del servidor
             pygame.event.pump()  # Procesamos eventos de pygame para evitar bloqueo
             time.sleep(0.1)  # Reducimos la carga de la CPU con una pequeña pausa
-
         if cliente.respuesta_partida and cliente.respuesta_partida.get("accion") == "cartas_seleccionadas":
             print(f"¡Evaluando ganador! Oponente ID: {cliente.respuesta_partida.get('oponente_id')} vs {id_jugador}")
             oponente_id = cliente.respuesta_partida.get('oponente_id')
             carta_rival = cliente.respuesta_partida.get('carta_rival')
             selecciono_carta = True
+            cartas_listas = False
             res = determinar_ganador(n_carta, carta_rival)
             if res == 1:
                 puntos += 1
             elif res == 2:
                 puntos_rival += 1
-            elif res == 3:
-                pass
+            turno_actual += 1
             return carta_rival
 
     def mostrar_dialogo(mensaje, ventana):
@@ -337,11 +401,23 @@ def main(id_jugador, mazo_seleccionado=None):
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     for hitbox in hitboxes_cartas:
-                        if hitbox["rect"].collidepoint(mouse_pos):
+                        if hitbox["rect"].collidepoint(mouse_pos) and not cartas_listas:
+                            cartas_listas = True
                             carta_seleccionada = hitbox["carta"]
                             print(f"Carta seleccionada: {carta_seleccionada}")
                             carta_rival = threading.Thread(target= cartavs, args=(id_jugador, carta_seleccionada,), daemon=True).start()
 
+
+            elif pantalla_actual == "final":
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    boton_rect = pygame.Rect(ANCHO // 2 - 100, ALTO - 150, 200, 50)
+                    if boton_rect.collidepoint(evento.pos):  # Detectar clic en el botón
+                        pantalla_actual = "principal"
+                        puntos = 0
+                        puntos_rival = 0
+                        shuffle = False
+                        turno_actual = 0
+                        pantalla_principal()
         ventana.fill(NEGRO)
 
         if buscando_partida:
@@ -355,7 +431,7 @@ def main(id_jugador, mazo_seleccionado=None):
 
         if pantalla_actual == "principal":
             pantalla_principal()
-        elif pantalla_actual == "rival_encontrado":
+        elif pantalla_actual == "rival_encontrado" or pantalla_actual == "final":
             hitboxes_cartas = pantalla_rival_encontrado(ventana,  jugador_id= id_jugador,oponente_id= oponente_id,mazo_id = mazo_seleccionado, mazo_rival=mazo_rival)
             if not carta_seleccionada == "":
                 if not carta_rival is None:
