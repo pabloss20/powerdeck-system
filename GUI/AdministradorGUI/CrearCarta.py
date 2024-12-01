@@ -160,7 +160,7 @@ def iniciar_crear_carta():
 
     select_boxes = [
         pygame_gui.elements.UIDropDownMenu(
-            options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Basica"],
+            options_list=["Ultra-Rara", "Muy-Rara", "Rara", "Normal", "Básica"],
             starting_option="Normal",
             relative_rect=pygame.Rect((600, ALTO_VENTANA * 0.26, 350, 42)),
             manager=MANAGER,
@@ -303,7 +303,10 @@ def iniciar_crear_carta():
             nombre_personaje = text_input_boxes[0].get_text()
             descripcion = text_input_boxes[1].get_text()
             nombre_variante = text_input_boxes[2].get_text()
-            raza_str = text_input_boxes[6].selected_option[0]
+            if text_input_boxes[6].selected_option[0] == "Básica":
+                raza_str = "Basica"
+            else:
+                raza_str = text_input_boxes[6].selected_option[0]
             tipo_carta_str = select_boxes[0].selected_option[0]  # Tipo de carta
             turno_poder = int(select_boxes[3].get_text())  # Convertir a entero
             bonus_poder = int(select_boxes[4].get_text())  # Convertir a entero

@@ -124,3 +124,31 @@ class JsonHandler:
         mazos_jugador = [mazo for mazo in data if mazo.get("jugador") == id_jugador]
 
         return mazos_jugador
+
+    def obtener_cartas_de_mazo(self, nombre_mazo, id_jugador):
+        """
+        Retorna los datos completos de las cartas de un mazo específico, identificado por su nombre,
+        perteneciente a un jugador.
+
+        Args:
+        - nombre_mazo (str): El nombre del mazo.
+        - id_jugador (str): El ID del jugador propietario del mazo.
+
+        Returns:
+        - list: Lista de diccionarios con los datos completos de las cartas del mazo.
+                Si no se encuentra el mazo o las cartas, retorna una lista vacía.
+        """
+        # Obtiene todos los mazos del jugador
+        cartas_H = JsonHandler('../../Files/cartas.json')
+        cartas_totales = cartas_H.cargar_cartas()
+        mazos_H = JsonHandler('../../Files/mazo.json')
+        mazos = mazos_H.obtener_mazos_de_jugador(id_jugador)
+
+        for mazo in mazos:
+            if mazo["nombre"] == nombre_mazo:
+                id_cartas = mazo.get("cartas", [])
+                cartas_completas = [
+                    carta for carta in cartas_totales if carta["llave"] in id_cartas
+                ]
+                return cartas_completas
+        return []

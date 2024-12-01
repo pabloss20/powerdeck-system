@@ -143,7 +143,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 12,
-        "bonus_poder": 12,
+        "bonus_poder": 76,
         "atributos": {
             "poder": 12,
             "velocidad": 12,
@@ -187,7 +187,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 12,
-        "bonus_poder": 12,
+        "bonus_poder": 93,
         "atributos": {
             "poder": 12,
             "velocidad": 12,
@@ -231,7 +231,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 12,
-        "bonus_poder": 12,
+        "bonus_poder": 32,
         "atributos": {
             "poder": 12,
             "velocidad": 12,
@@ -319,7 +319,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 12,
-        "bonus_poder": 12,
+        "bonus_poder": 71,
         "atributos": {
             "poder": 12,
             "velocidad": 12,
@@ -363,7 +363,7 @@
         "activa_en_juego": true,
         "activa_en_sobres": true,
         "turno_poder": 12,
-        "bonus_poder": 12,
+        "bonus_poder": 24,
         "atributos": {
             "poder": 12,
             "velocidad": 12,
@@ -393,6 +393,50 @@
             "valentia": 21
         },
         "llave": "C-BpCwOBOEsxNz-V-Io04iXHbiITV",
+        "es_variante": false
+    },
+    {
+        "nombre_personaje": "Sprint3",
+        "descripcion": "sprint3",
+        "nombre_variante": "variante1",
+        "fecha_creacion": "2024-11-17T10:17:52.809293",
+        "fecha_modificacion": "2024-11-17T10:17:52.809293",
+        "raza": "Humano",
+        "imagen": "../../Cartas\\carta24.png",
+        "tipo_carta": "Normal",
+        "activa_en_juego": true,
+        "activa_en_sobres": true,
+        "turno_poder": 2,
+        "bonus_poder": 80,
+        "atributos": {
+            "poder": 1,
+            "velocidad": 1,
+            "magia": 1,
+            "defensa": 1,
+            "inteligencia": 1,
+            "altura": 1,
+            "fuerza": 1,
+            "agilidad": 1,
+            "salto": 1,
+            "resistencia": 1,
+            "flexibilidad": 1,
+            "explosividad": 1,
+            "carisma": 1,
+            "habilidad": 1,
+            "balance": 1,
+            "sabidur\u00eda": 1,
+            "suerte": 1,
+            "coordinacion": 1,
+            "amabilidad": 1,
+            "lealtad": 1,
+            "disciplina": 1,
+            "liderazgo": 1,
+            "prudencia": 1,
+            "confianza": 1,
+            "percepcion": 1,
+            "valentia": 1
+        },
+        "llave": "C-DqQIhTjsuqvI-V-YdmFU1IFAPxW",
         "es_variante": false
     }
 ]

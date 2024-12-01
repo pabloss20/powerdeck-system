@@ -29,17 +29,27 @@ class Cliente:
             print(f"Error al enviar el mensaje: {e}")
             return e
 
-    def buscar_partida(self, id_jugador):
+    def buscar_partida(self, id_jugador, n_mazo):
         # Enviar la solicitud de buscar partida con la ID del jugador
         mensaje = {
             "accion": "buscar_partida",
-            "id_jugador": id_jugador
+            "id_jugador": id_jugador,
+            "mazo_rival" : n_mazo
         }
 
         self.enviar_mensaje(mensaje)
         print("Buscando partida...")
 
         # Aquí crearás un hilo para recibir la respuesta
+        threading.Thread(target=self.recibir_mensajes).start()
+    def seleccionar_carta(self, id_jugador, n_carta):
+        mensaje = {
+            "accion": "seleccionando_cartas",
+            "id_jugador": id_jugador,
+            "carta_seleccionada": n_carta
+        }
+        self.enviar_mensaje(mensaje)
+        print("Seleccionando carta...")
         threading.Thread(target=self.recibir_mensajes).start()
 
     def recibir_mensajes(self):
@@ -54,6 +64,10 @@ class Cliente:
                         self.respuesta_partida = mensaje
                         print(f"Partida encontrada: {mensaje['mensaje']}")
                         break
+                    if mensaje.get("accion") == "cartas_seleccionadas":
+                        self.respuesta_partida = mensaje
+                        print(f"evaluando ganador")
+                        break
 
             except Exception as e:
                 print(f"Error al recibir mensaje: {e}")
@@ -64,10 +78,3 @@ class Cliente:
             self.cliente_socket.close()
             print("Conexión cerrada.")
 
-if __name__ == "__main__":
-    cliente = Cliente(host=IP, puerto=12345)
-    cliente.conectar()
-
-    # Supón que el cliente tiene su ID ya asignada
-    id_jugador = "jugador_123"  # Esta es la ID del jugador en el cliente
-    cliente.buscar_partida(id_jugador)
